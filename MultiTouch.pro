@@ -28,14 +28,22 @@ SOURCES += \
         mainwindow.cpp \
     pathelement.cpp \
     slide.cpp \
-    widget.cpp
+    widget.cpp \
+    device_node_identify.cpp \
+    mythread.cpp \
+    touch_data_receive.c \
+    event_identify.cpp
 
 HEADERS += \
         mainwindow.h \
     kmp.h \
     pathelement.h \
     slide.h \
-    widget.h
+    widget.h \
+    device_node_identify.h \
+    mythread.h \
+    touch_data_receive.h \
+    event_identify.h
 
 FORMS += \
         mainwindow.ui

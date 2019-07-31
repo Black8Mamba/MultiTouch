@@ -7,6 +7,15 @@ Slide::Slide(QObject *parent)
     :QGraphicsScene(parent)
 {
     this->is_drawing_ = false;
+    qRegisterMetaType<HidMtFingerReport>("HidMtFingerReport");
+    connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport)),
+               this, SLOT(UpdateDataSlot(HidMtFingerReport)));
+    thread_.start();
+}
+
+Slide::~Slide()
+{
+    thread_.stop();
 }
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
@@ -151,6 +160,37 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
     }
 
     //qDebug() << "typeid: " << typeid(p).name() << endl;
+}
+
+void Slide::UpdateDataSlot(HidMtFingerReport finger_report)
+{
+    qDebug() << "update" << endl;
+    qDebug() << finger_report.count << endl;
+    event_.EventUpdate(finger_report);
+    if (event_.GetDown()) {
+        qDebug() << "down" << endl;
+        //start_point_ = event_.GetPos();
+       // qDebug() << "startPoint x " << start_point_.x() << endl;
+       // qDebug() << "startPoint y " << start_point_.y() << endl;
+        //touch_status = down_;
+        //update();
+    } else if (event_.GetMove()) {
+        qDebug() << "move" << endl;
+        //end_point_ = event_.GetPos();
+       // qDebug() << "endPoint x " << end_point_.x() << endl;
+       // qDebug() << "endPoint y " << end_point_.y() << endl;
+       // tempPix_ = pix_;
+       // touch_status = move_;
+        //update();
+    } else if (event_.GetUp()) {
+        qDebug() << "up" << endl;
+       // end_point_ = event_.GetPos();
+       // qDebug() << "endPoint x " << end_point_.x() << endl;
+      //  qDebug() << "endPoint y " << end_point_.y() << endl;
+      // touch_status = up_;
+        //update();
+    }
+    fflush(stdout);
 }
 
 

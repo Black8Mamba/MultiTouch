@@ -7,6 +7,7 @@
 Widget::Widget(QWidget *parent):
     QGraphicsView(parent)
 {
+    //connect(parent, SIGNALClear), this, SLOT(ClearScreen));
     this->setInteractive(true);
     this->setOptimizationFlag(QGraphicsView::IndirectPainting);
     this->setCacheMode(QGraphicsView::CacheBackground);
