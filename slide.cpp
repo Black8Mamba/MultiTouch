@@ -56,6 +56,7 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
 
 void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
+    Q_UNUSED(pt);
 
     if (item_map_.keys().contains(id)) {
         InkData *dt = item_map_.value(id);
@@ -116,7 +117,9 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
       QGraphicsRectItem* li = addRect(dt->element_->list_points_[0].x(),
               dt->element_->list_points_[0].y(),
               dt->pre_point_.x() - dt->element_->list_points_[0].x(),
-              dt->pre_point_.y() - dt->element_->list_points_[0].y());
+              dt->pre_point_.y() - dt->element_->list_points_[0].y(),
+              QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
+                 Qt::RoundCap, Qt::RoundJoin));
       dt->temp_item_.push_back(li);
     } else if (typeid(class_type).name() == string("10MyPathItem")) {
     QGraphicsLineItem* li = addLine(dt->pre_point_.x(),
@@ -131,7 +134,9 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
         QGraphicsEllipseItem* li = addEllipse(dt->element_->list_points_[0].x(),
                 dt->element_->list_points_[0].y(),
                 dt->pre_point_.x() - dt->element_->list_points_[0].x(),
-                dt->pre_point_.y() - dt->element_->list_points_[0].y());
+                dt->pre_point_.y() - dt->element_->list_points_[0].y(),
+                QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
+                     Qt::RoundCap, Qt::RoundJoin));
         dt->temp_item_.push_back(li);
     } else if (typeid(class_type).name() == string("10MyLineItem")) {
         QGraphicsScene::removeItem(dt->temp_item_.back());
@@ -139,7 +144,9 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
         QGraphicsLineItem* li = addLine(dt->element_->list_points_[0].x(),
                 dt->element_->list_points_[0].y(),
                 dt->pre_point_.x(),
-                dt->pre_point_.y());
+                dt->pre_point_.y(),
+                QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
+                     Qt::RoundCap, Qt::RoundJoin));
         dt->temp_item_.push_back(li);
     }
 
