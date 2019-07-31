@@ -85,4 +85,23 @@ public:
 private:
     void Initialize(void);
 };
+
+class MyLineItem : public MyQGraphicsItem
+{
+public:
+    MyLineItem();
+    void Render(void);
+    void SetColor( const QColor& color );
+    void SetThickness( int thickcness );
+    void SetLayer( qreal zvalue );
+
+    QColor Color(void) const { return path_item_.data(KMP_::EPT_Color).value<QColor>(); }
+    int Thickness(void) const { return path_item_.data(KMP_::EPT_Thickness).toInt(); }
+    QVector<QPointF> Points(void) { return list_points_; }
+    void AddPoint(const QPointF& pt) { return list_points_.push_back(pt); }
+
+    QGraphicsLineItem path_item_;
+private:
+    void Initialize(void);
+};
 #endif // PATHELEMENT_H

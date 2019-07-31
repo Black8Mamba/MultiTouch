@@ -172,3 +172,50 @@ void MyEllipseItem::Initialize()
     path_item_.setData( KMP_::EPT_Locked,QVariant(false));
     path_item_.setData( KMP_::EPT_Visibiled,QVariant(false ));
 }
+
+MyLineItem::MyLineItem()
+{
+    ;
+}
+
+void MyLineItem::Render()
+{
+    if (this->list_points_.size() < 1)
+        return ;
+    path_item_.setPen(QPen(QBrush(Color()), (qreal)Thickness(), Qt::SolidLine
+                 , Qt::RoundCap, Qt::RoundJoin));
+
+   // path_item_.setRect(list_points_[0].x(), list_points_[0].y(),
+   //         abs(list_points_.last().x()-list_points_[0].x()), abs(list_points_.last().y()-list_points_[0].y()));
+    path_item_.setLine(list_points_[0].x(), list_points_[0].y(),
+            list_points_.last().x(), list_points_.last().y());
+}
+
+void MyLineItem::SetColor(const QColor &color)
+{
+    QVariant v;
+    v.setValue<QColor>(color);
+    path_item_.setData(KMP_::EPT_Color, v);
+}
+
+void MyLineItem::SetThickness(int thickcness)
+{
+    path_item_.setData(KMP_::EPT_Thickness, QVariant(thickcness));
+}
+
+void MyLineItem::SetLayer(qreal zvalue)
+{
+    path_item_.setData(KMP_::EPT_Layer, QVariant(zvalue));
+    path_item_.setZValue(zvalue);
+}
+
+void MyLineItem::Initialize()
+{
+    QVariant v;
+    v.setValue<QColor>(Qt::red);
+    path_item_.setData( KMP_::EPT_Color,v);
+    path_item_.setData( KMP_::EPT_Id,QVariant(QUuid::createUuid().toString()));
+    path_item_.setData( KMP_::EPT_Thickness,QVariant(4));
+    path_item_.setData( KMP_::EPT_Locked,QVariant(false));
+    path_item_.setData( KMP_::EPT_Visibiled,QVariant(false ));
+}

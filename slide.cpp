@@ -20,7 +20,7 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
             QGraphicsScene::removeItem(static_cast<QGraphicsItem*>(&my_item->path_item_));
         }
         if (dt->temp_item_.size() > 1) {
-            for (size_t i = 0; i < dt->temp_item_.size(); ++i)
+            for (int i = 0; i < dt->temp_item_.size(); ++i)
                 QGraphicsScene::removeItem(dt->temp_item_[i]);
         }
         dt->temp_item_.clear();
@@ -32,9 +32,10 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
     dt->pre_point_ = pt;
     //dt->element_ = new PathElement;
     //dt->element_ = new RectItem;
-   dt->element_ = new MyPathItem;
+   //dt->element_ = new MyPathItem;
     //dt->element_ = new MyEllipseItem;
    // dt->element_ = dynamic_cast<MyQGraphicsItem*>(new MyRectItem);
+    dt->element_ = new MyLineItem;
     dt->element_->AddPoint(pt);
     item_map_.insert(id, dt);
     this->DrawStart(dt);
@@ -55,9 +56,10 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
 
 void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
+
     if (item_map_.keys().contains(id)) {
         InkData *dt = item_map_.value(id);
-        for (size_t i = 0; i < dt->temp_item_.size(); ++i) {
+        for (int i = 0; i < dt->temp_item_.size(); ++i) {
             QGraphicsScene::removeItem(dt->temp_item_[i]);
         }
 
@@ -130,6 +132,14 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
                 dt->element_->list_points_[0].y(),
                 dt->pre_point_.x() - dt->element_->list_points_[0].x(),
                 dt->pre_point_.y() - dt->element_->list_points_[0].y());
+        dt->temp_item_.push_back(li);
+    } else if (typeid(class_type).name() == string("10MyLineItem")) {
+        QGraphicsScene::removeItem(dt->temp_item_.back());
+        dt->temp_item_.pop_back();
+        QGraphicsLineItem* li = addLine(dt->element_->list_points_[0].x(),
+                dt->element_->list_points_[0].y(),
+                dt->pre_point_.x(),
+                dt->pre_point_.y());
         dt->temp_item_.push_back(li);
     }
 
