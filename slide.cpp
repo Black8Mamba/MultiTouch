@@ -32,7 +32,8 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
     dt->pre_point_ = pt;
     //dt->element_ = new PathElement;
     //dt->element_ = new RectItem;
-    dt->element_ = new MyPathItem;
+   dt->element_ = new MyPathItem;
+    //dt->element_ = new MyEllipseItem;
    // dt->element_ = dynamic_cast<MyQGraphicsItem*>(new MyRectItem);
     dt->element_->AddPoint(pt);
     item_map_.insert(id, dt);
@@ -122,6 +123,14 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
                                     QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
                                          Qt::RoundCap, Qt::RoundJoin));
     dt->temp_item_.push_back(li);
+    } else if (typeid(class_type).name() == string("13MyEllipseItem")) {
+        QGraphicsScene::removeItem(dt->temp_item_.back());
+        dt->temp_item_.pop_back();
+        QGraphicsEllipseItem* li = addEllipse(dt->element_->list_points_[0].x(),
+                dt->element_->list_points_[0].y(),
+                dt->pre_point_.x() - dt->element_->list_points_[0].x(),
+                dt->pre_point_.y() - dt->element_->list_points_[0].y());
+        dt->temp_item_.push_back(li);
     }
 
     //qDebug() << "typeid: " << typeid(p).name() << endl;
