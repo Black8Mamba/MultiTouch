@@ -30,7 +30,7 @@ public:
     RawTouchEvent();
     void EventUpdate(HidMtFingerReport& finger_report, QRect rect);
     bool IsTouchUpdate(HidMtFingerReport& finger_report);
-    QList<RawTouchEvent::TouchPoint> touchPoints() { return point_list_; }
+    QList<RawTouchEvent::TouchPoint>* touchPoints() { return &point_list_; }
    // RawTouchEvent::Type type() const { return event_type_; }
     void SetFingerReport(HidMtFingerReport &finger_report) { this->finger_report = finger_report; }
 

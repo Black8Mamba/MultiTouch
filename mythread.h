@@ -24,7 +24,7 @@ private:
     HidMtFingerReport finger_report_;
     int fd_;
 signals:
-    void UpdateDataSignal(HidMtFingerReport finger_report);
+    void UpdateDataSignal(HidMtFingerReport* finger_report);
 };
 
 #endif // MYTHREAD_H

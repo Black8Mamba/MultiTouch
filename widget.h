@@ -25,7 +25,7 @@ protected:
     virtual bool viewportEvent(QEvent *event);
 
 private slots:
-    void UpdateDataSlot(HidMtFingerReport finger_report);
+    void UpdateDataSlot(HidMtFingerReport *finger_report);
 
 private:
     Slide *current_slide_;

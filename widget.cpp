@@ -29,9 +29,9 @@ Widget::Widget(QWidget *parent):
 
     this->current_slide_ = slide;
 
-     qRegisterMetaType<HidMtFingerReport>("HidMtFingerReport");
-     connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport)),
-                this, SLOT(UpdateDataSlot(HidMtFingerReport)));
+     qRegisterMetaType<HidMtFingerReport*>("HidMtFingerReport*");
+     connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport*)),
+                this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
      thread_.start();
 }
 
@@ -102,15 +102,15 @@ bool Widget::viewportEvent(QEvent *event)
    return QGraphicsView::viewportEvent(event); //must
 }
 
-void Widget::UpdateDataSlot(HidMtFingerReport finger_report)
+void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 {
     qDebug() << "geometry:" << this->geometry() << endl;
     qDebug() << "framGeometry:" << this->frameGeometry() << endl;
-    event_.EventUpdate(finger_report, this->frameGeometry());
-    if (event_.IsTouchUpdate(finger_report)) {
-        event_.SetFingerReport(finger_report);
-        QList<RawTouchEvent::TouchPoint> touch_points = event_.touchPoints();
-        foreach (const RawTouchEvent::TouchPoint tp, touch_points) {
+    event_.EventUpdate(*finger_report, this->frameGeometry());
+    if (event_.IsTouchUpdate(*finger_report)) {
+        event_.SetFingerReport(*finger_report);
+        QList<RawTouchEvent::TouchPoint> *touch_points = event_.touchPoints();//optimization
+        foreach (const RawTouchEvent::TouchPoint tp, *touch_points) {
            QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
            if (tp.id() == 0) {
                if (tp.state() == Qt::TouchPointPressed)
