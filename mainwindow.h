@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "widget.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    //Widget x;
+
 };
 
 #endif // MAINWINDOW_H

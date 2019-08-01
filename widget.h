@@ -6,6 +6,10 @@
 #include "mythread.h"
 #include "rawtouchevent.h"
 
+//namespace Ui {
+//class Widget;
+//}
+
 class Slide;
 class Widget : public QGraphicsView
 {
@@ -33,6 +37,7 @@ private:
 
     MyThread thread_;
     RawTouchEvent event_;
+    //Ui::Widget *ui;
 
 signals:
     void SlideChangedBefore(void);

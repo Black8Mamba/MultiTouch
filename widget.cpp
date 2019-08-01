@@ -1,13 +1,18 @@
 #include "widget.h"
 #include "slide.h"
 
+#include <QPushButton>
 #include <QTouchEvent>
 #include <QEvent>
 #include <QDebug>
 
 Widget::Widget(QWidget *parent):
     QGraphicsView(parent)
+    //ui(new Ui::Widget)
 {
+    QPushButton *button = new QPushButton(this);
+    button->setText("haha");
+    button->show();
     this->setInteractive(true);
     this->setOptimizationFlag(QGraphicsView::IndirectPainting);
     this->setCacheMode(QGraphicsView::CacheBackground);
@@ -32,12 +37,12 @@ Widget::Widget(QWidget *parent):
      qRegisterMetaType<HidMtFingerReport*>("HidMtFingerReport*");
      connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport*)),
                 this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
-     thread_.start();
+    // thread_.start();
 }
 
 Widget::~Widget()
 {
-    thread_.stop();
+    //thread_.stop();
 }
 
 void Widget::SetScene(Slide *scene)
@@ -57,7 +62,7 @@ void Widget::resizeEvent(QResizeEvent *event)
 
 bool Widget::viewportEvent(QEvent *event)
 {
-#if 0
+#if 1
     QEvent::Type ev_type = event->type();
     if (ev_type == QEvent::TouchBegin || ev_type == QEvent::TouchUpdate
             ||ev_type == QEvent::TouchEnd) {

@@ -51,11 +51,14 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
     if (item_map_.keys().contains(id)) {
         InkData *dt = item_map_.value(id);
         QPointF to = pt;
-        if (dt->element_)
+        if (dt->element_) {
             dt->element_->AddPoint(to);
+            this->DrawTo(dt, to);
+            dt->pre_point_ = to;
+        }
 
-        this->DrawTo(dt, to);
-        dt->pre_point_ = to;
+        //this->DrawTo(dt, to);
+        //dt->pre_point_ = to;
     }
 }
 
@@ -115,6 +118,8 @@ void Slide::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void Slide::DrawStart(InkData *dt)
 {
+    if (dt == NULL)
+        return ;
     qDebug() <<"draw start" << endl;
     qreal x = dt->pre_point_.x() - ink_thickness_/2.f;
     qreal y = dt->pre_point_.y() - ink_thickness_/2.f;
@@ -126,6 +131,8 @@ void Slide::DrawStart(InkData *dt)
 
 void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
 {
+    if (dt == NULL)
+        return ;
     qDebug() <<"draw to" << endl;
     MyQGraphicsItem &class_type = *(dt->element_);
     qDebug() << typeid(class_type).name()<< endl;
@@ -173,42 +180,6 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
 
     //qDebug() << "typeid: " << typeid(p).name() << endl;
 }
-
-#if 0
-void Slide::UpdateDataSlot(HidMtFingerReport finger_report)
-{
-#if 1
-    qDebug() << "update" << endl;
-    qDebug() << finger_report.count << endl;
-    event_.EventUpdate(finger_report);
-    QList<RawTouchEvent::TouchPoint> touch_points = event_.touchPoints();
-    foreach (const RawTouchEvent::TouchPoint tp, touch_points) {
-       QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
-       //if (tp.id() == 0) {
-       //    if (tp.state() == Qt::TouchPointPressed)
-       //        this->is_touch_mode_ = true;
-       //    else
-       //        this->is_touch_mode_ = false;
-       //}
-       QPointF scene_pos = parent()->mapToScene(touchPos.x(), touchPos.y());
-       switch(tp.state()) {
-       case Qt::TouchPointPressed:
-           this->OnDeviceDown(scene_pos, tp.id());
-           break;
-       case Qt::TouchPointMoved:
-           this->OnDeviceMove(scene_pos, tp.id());
-           break;
-       case Qt::TouchPointReleased:
-           this->OnDeviceUp(scene_pos, tp.id());
-           break;
-       default:
-           break;
-       }
-    }
-    fflush(stdout);
-#endif
-}
-#endif
 
 
 
