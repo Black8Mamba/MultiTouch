@@ -7,15 +7,11 @@ Slide::Slide(QObject *parent)
     :QGraphicsScene(parent)
 {
     this->is_drawing_ = false;
-    qRegisterMetaType<HidMtFingerReport>("HidMtFingerReport");
-    connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport)),
-               this, SLOT(UpdateDataSlot(HidMtFingerReport)));
-    thread_.start();
 }
 
 Slide::~Slide()
 {
-    thread_.stop();
+    //thread_.stop();
 }
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
@@ -41,10 +37,10 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
     dt->pre_point_ = pt;
     //dt->element_ = new PathElement;
     //dt->element_ = new RectItem;
-   //dt->element_ = new MyPathItem;
+   dt->element_ = new MyPathItem;
     //dt->element_ = new MyEllipseItem;
    // dt->element_ = dynamic_cast<MyQGraphicsItem*>(new MyRectItem);
-    dt->element_ = new MyLineItem;
+   // dt->element_ = new MyLineItem;
     dt->element_->AddPoint(pt);
     item_map_.insert(id, dt);
     this->DrawStart(dt);
@@ -87,27 +83,39 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
 
 void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+
+#if 0
     this->is_drawing_ = true;
     this->OnDeviceDown(event->scenePos());
+
+#endif
 }
 
 void Slide::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << this->width() << endl;
+    qDebug() << this->height() << endl;
+#if 0
     if (this->is_drawing_) {
         this->OnDeviceMove(event->scenePos());
     }
+#endif
 }
+//
 
 void Slide::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+#if 0
     if (this->is_drawing_) {
         this->is_drawing_ = false;
         this->OnDeviceUp(event->scenePos());
     }
+#endif
 }
 
 void Slide::DrawStart(InkData *dt)
 {
+    qDebug() <<"draw start" << endl;
     qreal x = dt->pre_point_.x() - ink_thickness_/2.f;
     qreal y = dt->pre_point_.y() - ink_thickness_/2.f;
 
@@ -118,6 +126,7 @@ void Slide::DrawStart(InkData *dt)
 
 void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
 {
+    qDebug() <<"draw to" << endl;
     MyQGraphicsItem &class_type = *(dt->element_);
     qDebug() << typeid(class_type).name()<< endl;
     if (typeid(class_type).name() == string("10MyRectItem")) {
@@ -156,42 +165,50 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
                 dt->pre_point_.y(),
                 QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
                      Qt::RoundCap, Qt::RoundJoin));
+        qDebug() <<"Point_start:" << dt->element_->list_points_[0] << endl;
+        qDebug() <<"Point_end:" << dt->pre_point_ << endl;
+        qDebug() << li << endl;
         dt->temp_item_.push_back(li);
     }
 
     //qDebug() << "typeid: " << typeid(p).name() << endl;
 }
 
+#if 0
 void Slide::UpdateDataSlot(HidMtFingerReport finger_report)
 {
+#if 1
     qDebug() << "update" << endl;
     qDebug() << finger_report.count << endl;
     event_.EventUpdate(finger_report);
-    if (event_.GetDown()) {
-        qDebug() << "down" << endl;
-        //start_point_ = event_.GetPos();
-       // qDebug() << "startPoint x " << start_point_.x() << endl;
-       // qDebug() << "startPoint y " << start_point_.y() << endl;
-        //touch_status = down_;
-        //update();
-    } else if (event_.GetMove()) {
-        qDebug() << "move" << endl;
-        //end_point_ = event_.GetPos();
-       // qDebug() << "endPoint x " << end_point_.x() << endl;
-       // qDebug() << "endPoint y " << end_point_.y() << endl;
-       // tempPix_ = pix_;
-       // touch_status = move_;
-        //update();
-    } else if (event_.GetUp()) {
-        qDebug() << "up" << endl;
-       // end_point_ = event_.GetPos();
-       // qDebug() << "endPoint x " << end_point_.x() << endl;
-      //  qDebug() << "endPoint y " << end_point_.y() << endl;
-      // touch_status = up_;
-        //update();
+    QList<RawTouchEvent::TouchPoint> touch_points = event_.touchPoints();
+    foreach (const RawTouchEvent::TouchPoint tp, touch_points) {
+       QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
+       //if (tp.id() == 0) {
+       //    if (tp.state() == Qt::TouchPointPressed)
+       //        this->is_touch_mode_ = true;
+       //    else
+       //        this->is_touch_mode_ = false;
+       //}
+       QPointF scene_pos = parent()->mapToScene(touchPos.x(), touchPos.y());
+       switch(tp.state()) {
+       case Qt::TouchPointPressed:
+           this->OnDeviceDown(scene_pos, tp.id());
+           break;
+       case Qt::TouchPointMoved:
+           this->OnDeviceMove(scene_pos, tp.id());
+           break;
+       case Qt::TouchPointReleased:
+           this->OnDeviceUp(scene_pos, tp.id());
+           break;
+       default:
+           break;
+       }
     }
     fflush(stdout);
+#endif
 }
+#endif
 
 
 

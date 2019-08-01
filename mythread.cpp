@@ -31,7 +31,7 @@ void MyThread:: run()
     stopped_ = false;
     while(!stopped_) {
         TouchDataReceive(fd_, reinterpret_cast<unsigned char*>(&finger_report_), sizeof(finger_report_));
-        qDebug() << "thead!" << endl;
+       // qDebug() << "thead!" << endl;
         emit UpdateDataSignal(finger_report_);
     }
     stopped_ = false;

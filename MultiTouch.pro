@@ -32,7 +32,7 @@ SOURCES += \
     device_node_identify.cpp \
     mythread.cpp \
     touch_data_receive.c \
-    event_identify.cpp
+    rawtouchevent.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +43,7 @@ HEADERS += \
     device_node_identify.h \
     mythread.h \
     touch_data_receive.h \
-    event_identify.h
+    rawtouchevent.h
 
 FORMS += \
         mainwindow.ui

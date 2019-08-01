@@ -5,14 +5,13 @@
 #include <string>
 #include <QString>
 #include <iostream>
-#include "device_node_identify.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    Widget x(&w);
-    w.show();
+    Widget x;
+    x.show();
 
     return a.exec();
 }

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QGraphicsView>
+#include "mythread.h"
+#include "rawtouchevent.h"
 
 class Slide;
 class Widget : public QGraphicsView
@@ -22,9 +24,15 @@ protected:
     void resizeEvent(QResizeEvent *event);
     virtual bool viewportEvent(QEvent *event);
 
+private slots:
+    void UpdateDataSlot(HidMtFingerReport finger_report);
+
 private:
     Slide *current_slide_;
     bool is_touch_mode_;
+
+    MyThread thread_;
+    RawTouchEvent event_;
 
 signals:
     void SlideChangedBefore(void);

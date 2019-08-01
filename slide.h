@@ -7,8 +7,7 @@
 #include <QVector>
 #include "pathelement.h"
 #include <QGraphicsSceneMouseEvent>
-#include "mythread.h"
-#include "event_identify.h"
+
 
 class InkData
 {
@@ -46,16 +45,14 @@ protected:
     void DrawStart(InkData *dt);
     void DrawTo(InkData *dt, const QPointF &to);
 
-private slots:
-    void UpdateDataSlot(HidMtFingerReport finger_report);
+//private slots:
+//    void UpdateDataSlot(HidMtFingerReport finger_report);
 
 private:
     QMap<int, InkData*> item_map_;
     QColor ink_color_;
     int ink_thickness_;
     bool is_drawing_;
-    MyThread thread_;
-    EventIdentify event_;
 };
 
 #endif // SLIDE_H

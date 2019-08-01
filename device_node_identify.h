@@ -1,3 +1,6 @@
+#ifndef DEVICE_NODE_IDENTIFY_
+#define DEVICE_NODE_IDENTIFY_
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <vector>
@@ -50,3 +53,4 @@ vector<string> GetHidrawDeviceList(string dirent_path);
 string GetDeviceNode(string device_dirent_path, 
                     string phy_info);
 }
+#endif
