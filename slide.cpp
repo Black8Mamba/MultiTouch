@@ -8,6 +8,7 @@ Slide::Slide(QObject *parent)
 {
     this->is_drawing_ = false;
     this->index_ = 0;
+    this->count = 0;
 }
 
 Slide::~Slide()
@@ -17,6 +18,7 @@ Slide::~Slide()
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
 {
+    count++;
     if (item_map_.keys().contains(id)) {
 
         InkData *dt = item_map_.value(id);
@@ -45,6 +47,7 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
     dt->element_->AddPoint(pt);
     item_map_.insert(id, dt);
     this->DrawStart(dt);
+    //this->all_ink_.insert(index_++, dt);
 }
 
 void Slide::OnDeviceMove(const QPointF &pt, int id)
@@ -65,6 +68,7 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
 
 void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
+    count--;
     Q_UNUSED(pt);
 
     if (item_map_.keys().contains(id)) {
@@ -87,32 +91,35 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
 
 void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
 #if 0
-    this->is_drawing_ = true;
-    this->OnDeviceDown(event->scenePos());
 
+    if (!is_touch_mode_) {
+        this->is_drawing_ = true;
+        this->OnDeviceDown(event->scenePos());
+    }
 #endif
 }
 
 void Slide::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << this->width() << endl;
-    qDebug() << this->height() << endl;
 #if 0
-    if (this->is_drawing_) {
-        this->OnDeviceMove(event->scenePos());
+    qDebug() << "move " << is_touch_mode_ << endl;
+    if (!is_touch_mode_) {
+        if (this->is_drawing_) {
+            this->OnDeviceMove(event->scenePos());
+        }
     }
 #endif
 }
-//
 
 void Slide::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 #if 0
-    if (this->is_drawing_) {
-        this->is_drawing_ = false;
-        this->OnDeviceUp(event->scenePos());
+    if (!is_touch_mode_){
+        if (this->is_drawing_) {
+            this->is_drawing_ = false;
+            this->OnDeviceUp(event->scenePos());
+        }
     }
 #endif
 }

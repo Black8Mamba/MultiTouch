@@ -18,7 +18,7 @@ public:
     Widget(QWidget *parent = 0);
     ~Widget();
 
-    void SetInkColor(const QColor *color);
+    void SetInkColor(const QColor color);
     void SetInkThickness(int thickness);
 
     Slide* CurrentSlide(void) const {return this->current_slide_; }
@@ -26,16 +26,21 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    virtual bool viewportEvent(QEvent *event);
+    virtual bool viewportEvent(QEvent *event);   
 
 private slots:
     void UpdateDataSlot(HidMtFingerReport *finger_report);
 
     void on_pushButton_clicked();
 
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_thickness_currentIndexChanged(int index);
+
 private:
     Slide *current_slide_;
     bool is_touch_mode_;
+    int data_source_;
 
     MyThread thread_;
     RawTouchEvent event_;

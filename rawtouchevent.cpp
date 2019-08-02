@@ -1,4 +1,5 @@
 #include "rawtouchevent.h"
+#include <QDebug>
 
 RawTouchEvent::RawTouchEvent() //: event_type_(RawTouchEvent::RawTouchEnd)
 {
@@ -50,6 +51,26 @@ bool RawTouchEvent::IsTouchUpdate(HidMtFingerReport &finger_report)
         }
         return false;
     }
+}
+
+bool RawTouchEvent::IsTouchStart(HidMtFingerReport &finger_report)
+{
+    if (this->finger_report.count == 1 &&
+            this->finger_report.finger_rpt[0].tip_switch == 1)
+        return true;
+    else
+        return false;
+}
+
+bool RawTouchEvent::IsTouchEnd(HidMtFingerReport &finger_report)
+{
+    qDebug() << "enter TouchEnd" << endl;
+    qDebug() << finger_report.finger_rpt[0].tip_switch << endl;
+    if (finger_report.count == 1 &&
+            finger_report.finger_rpt[0].tip_switch == 0)
+        return true;
+    else
+        return false;
 }
 
 bool RawTouchEvent::GetTipSwitch(HidMtFingerReport &finger_report, int index)

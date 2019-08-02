@@ -26,6 +26,101 @@
     <string>Clear</string>
    </property>
   </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>60</y>
+     <width>79</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Green</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Red</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Black</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Yellow</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Blue</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="thickness">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>100</y>
+     <width>79</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>width:1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:2</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:3</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:4</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:5</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:6</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:7</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:8</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:9</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>width:10</string>
+    </property>
+   </item>
+  </widget>
  </widget>
  <resources/>
  <connections/>
