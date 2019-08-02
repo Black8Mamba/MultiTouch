@@ -33,6 +33,7 @@ public:
     ~Slide();
     void SetColor(const QColor& color) { this->ink_color_ = color; }
     void SetThickness(int w) { this->ink_thickness_ = w; }
+    QMap<int, QGraphicsItem*>& GetItemMap(void) { return this->all_item_; }
 
     void OnDeviceDown(const QPointF& pt, int id = 0);
     void OnDeviceMove(const QPointF& pt, int id = 0);
@@ -50,6 +51,8 @@ protected:
 
 private:
     QMap<int, InkData*> item_map_;
+    QMap<int, QGraphicsItem*> all_item_;
+    int index_;
     QColor ink_color_;
     int ink_thickness_;
     bool is_drawing_;

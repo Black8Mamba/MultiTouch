@@ -7,6 +7,7 @@ Slide::Slide(QObject *parent)
     :QGraphicsScene(parent)
 {
     this->is_drawing_ = false;
+    this->index_ = 0;
 }
 
 Slide::~Slide()
@@ -79,7 +80,7 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
         //QGraphicsScene::addItem(dt->element_);
         MyPathItem* my_path = static_cast<MyPathItem*>(dt->element_);
         QGraphicsScene::addItem(static_cast<QGraphicsItem*>(&my_path->path_item_));
-
+        all_item_.insert(index_++, static_cast<QGraphicsItem*>(&my_path->path_item_));
         item_map_.remove(id);
     }
 }

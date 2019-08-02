@@ -46,4 +46,5 @@ HEADERS += \
     rawtouchevent.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    widget.ui

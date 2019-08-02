@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "slide.h"
+#include "ui_widget.h"
 
 #include <QPushButton>
 #include <QTouchEvent>
@@ -7,12 +8,10 @@
 #include <QDebug>
 
 Widget::Widget(QWidget *parent):
-    QGraphicsView(parent)
-    //ui(new Ui::Widget)
+    QGraphicsView(parent),
+    ui(new Ui::Widget)
 {
-    QPushButton *button = new QPushButton(this);
-    button->setText("haha");
-    button->show();
+    ui->setupUi(this);
     this->setInteractive(true);
     this->setOptimizationFlag(QGraphicsView::IndirectPainting);
     this->setCacheMode(QGraphicsView::CacheBackground);
@@ -144,3 +143,16 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 
 
 
+
+void Widget::on_pushButton_clicked()
+{
+    qDebug() << this->current_slide_->GetItemMap().size() << endl;
+
+    if (this->current_slide_->GetItemMap().size() > 0) {
+        for (QMap<int, QGraphicsItem*>::iterator it = this->current_slide_->GetItemMap().begin();
+             it != this->current_slide_->GetItemMap().end(); it++) {
+            this->current_slide_->removeItem(it.value());
+        }
+        this->current_slide_->GetItemMap().clear();
+    }
+}

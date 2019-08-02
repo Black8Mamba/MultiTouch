@@ -6,9 +6,9 @@
 #include "mythread.h"
 #include "rawtouchevent.h"
 
-//namespace Ui {
-//class Widget;
-//}
+namespace Ui {
+class Widget;
+}
 
 class Slide;
 class Widget : public QGraphicsView
@@ -31,13 +31,15 @@ protected:
 private slots:
     void UpdateDataSlot(HidMtFingerReport *finger_report);
 
+    void on_pushButton_clicked();
+
 private:
     Slide *current_slide_;
     bool is_touch_mode_;
 
     MyThread thread_;
     RawTouchEvent event_;
-    //Ui::Widget *ui;
+    Ui::Widget *ui;
 
 signals:
     void SlideChangedBefore(void);
