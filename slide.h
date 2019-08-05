@@ -20,8 +20,6 @@ public:
 public:
     QPointF pre_point_;
     QVector<QGraphicsItem*> temp_item_;
-    //PathElement *element_;//picture ele
-    //RectItem *element_;
     MyQGraphicsItem *element_;
 };
 
@@ -35,7 +33,7 @@ public:
     void SetThickness(int w) { this->ink_thickness_ = w; }
     void SetTouchMode(bool mode) { this->is_touch_mode_ = mode; }
     QMap<int, QGraphicsItem*>& GetItemMap(void) { return this->all_item_; }
-    QMap<int, InkData*>& GetInkMap(void) { return this->all_ink_; }
+    QMap<int, InkData*>& GetInkMap(void) { return this->item_map_; }
 
     void OnDeviceDown(const QPointF& pt, int id = 0);
     void OnDeviceMove(const QPointF& pt, int id = 0);
@@ -48,15 +46,10 @@ protected:
     void DrawStart(InkData *dt);
     void DrawTo(InkData *dt, const QPointF &to);
 
-//private slots:
-//    void UpdateDataSlot(HidMtFingerReport finger_report);
-public:
-    int count;
-
 private:
     QMap<int, InkData*> item_map_;
     QMap<int, QGraphicsItem*> all_item_;
-    QMap<int, InkData*> all_ink_;
+    //QMap<int, InkData*> all_ink_;
     int index_;
     QColor ink_color_;
     int ink_thickness_;

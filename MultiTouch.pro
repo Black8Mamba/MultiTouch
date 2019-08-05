@@ -36,14 +36,14 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    kmp.h \
     pathelement.h \
     slide.h \
     widget.h \
     device_node_identify.h \
     mythread.h \
     touch_data_receive.h \
-    rawtouchevent.h
+    rawtouchevent.h \
+    ept.h
 
 FORMS += \
         mainwindow.ui \

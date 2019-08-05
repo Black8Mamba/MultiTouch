@@ -174,26 +174,24 @@ void Widget::on_pushButton_clicked()
         for (QMap<int, QGraphicsItem*>::iterator it = this->current_slide_->GetItemMap().begin();
              it != this->current_slide_->GetItemMap().end(); it++) {
             this->current_slide_->removeItem(it.value());
+           // delete it.value();
         }
         this->current_slide_->GetItemMap().clear();
-        qDebug() <<"count :" << this->current_slide_->count << endl;
+        //qDebug() <<"count :" << this->current_slide_->count << endl;
     }
+
 #endif
-#if 0
-    if (this->current_slide_->GetInkMap().size() > 0) {
-        for (QMap<int, InkData*>::iterator it = this->current_slide_->GetInkMap().begin();
-             it != this->current_slide_->GetInkMap().end(); ++it) {
-
-            MyPathItem* my_path = static_cast<MyPathItem*>(it.value()->element_);
-            this->current_slide_->removeItem(static_cast<QGraphicsItem*>(&my_path->path_item_));
-
-            for (int i = 0; i < it.value()->temp_item_.size(); ++i) {
-                this->current_slide_->removeItem(it.value()->temp_item_[i]);
+        if (this->current_slide_->GetInkMap().size() > 0) {
+            for (QMap<int, InkData*>::iterator it = this->current_slide_->GetInkMap().begin();
+                 it != this->current_slide_->GetInkMap().end(); ++it) {
+                for (int i = 0; i < it.value()->temp_item_.size(); ++i) {
+                    this->current_slide_->removeItem(it.value()->temp_item_[i]);
+                }
+                it.value()->temp_item_.clear();
             }
-            //this->current_slide_->GetInkMap().clear();
+            this->current_slide_->GetInkMap().clear();
         }
-    }
-#endif
+    //this->current_slide_->clear();
 }
 
 void Widget::on_comboBox_currentIndexChanged(int index)

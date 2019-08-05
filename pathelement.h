@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QPointF>
 #include <QGraphicsItem>
-#include "kmp.h"
+#include "ept.h"
 #include <cmath>
 
 class MyQGraphicsItem
@@ -21,6 +21,7 @@ public:
     virtual int Thickness(void) const = 0;
     virtual QVector<QPointF> Points(void) = 0;
     virtual void AddPoint(const QPointF& pt) = 0;
+    virtual QGraphicsItem* returnItem(void) = 0;
     QVector<QPointF> list_points_;
 protected:
 
@@ -36,10 +37,11 @@ public:
     void SetThickness( int thickcness );
     void SetLayer( qreal zvalue );
 
-    QColor Color(void) const { return path_item_.data(KMP_::EPT_Color).value<QColor>(); }
-    int Thickness(void) const { return path_item_.data(KMP_::EPT_Thickness).toInt(); }
+    QColor Color(void) const { return path_item_.data(EPT::EPT_Color).value<QColor>(); }
+    int Thickness(void) const { return path_item_.data(EPT::EPT_Thickness).toInt(); }
     QVector<QPointF> Points(void) { return list_points_; }
     void AddPoint(const QPointF& pt) { return list_points_.push_back(pt); }
+    virtual QGraphicsItem* returnItem(void) { return &path_item_; }
 
     QGraphicsPathItem path_item_;
 
@@ -57,10 +59,11 @@ public:
     void SetThickness( int thickcness );
     void SetLayer( qreal zvalue );
 
-    QColor Color(void) const { return path_item_.data(KMP_::EPT_Color).value<QColor>(); }
-    int Thickness(void) const { return path_item_.data(KMP_::EPT_Thickness).toInt(); }
+    QColor Color(void) const { return path_item_.data(EPT::EPT_Color).value<QColor>(); }
+    int Thickness(void) const { return path_item_.data(EPT::EPT_Thickness).toInt(); }
     QVector<QPointF> Points(void) { return list_points_; }
     void AddPoint(const QPointF& pt) { return list_points_.push_back(pt); }
+    virtual QGraphicsItem* returnItem(void) { return &path_item_; }
 
     QGraphicsRectItem path_item_;
 private:
@@ -76,10 +79,11 @@ public:
     void SetThickness( int thickcness );
     void SetLayer( qreal zvalue );
 
-    QColor Color(void) const { return path_item_.data(KMP_::EPT_Color).value<QColor>(); }
-    int Thickness(void) const { return path_item_.data(KMP_::EPT_Thickness).toInt(); }
+    QColor Color(void) const { return path_item_.data(EPT::EPT_Color).value<QColor>(); }
+    int Thickness(void) const { return path_item_.data(EPT::EPT_Thickness).toInt(); }
     QVector<QPointF> Points(void) { return list_points_; }
     void AddPoint(const QPointF& pt) { return list_points_.push_back(pt); }
+    virtual QGraphicsItem* returnItem(void) { return &path_item_; }
 
     QGraphicsEllipseItem path_item_;
 private:
@@ -95,10 +99,11 @@ public:
     void SetThickness( int thickcness );
     void SetLayer( qreal zvalue );
 
-    QColor Color(void) const { return path_item_.data(KMP_::EPT_Color).value<QColor>(); }
-    int Thickness(void) const { return path_item_.data(KMP_::EPT_Thickness).toInt(); }
+    QColor Color(void) const { return path_item_.data(EPT::EPT_Color).value<QColor>(); }
+    int Thickness(void) const { return path_item_.data(EPT::EPT_Thickness).toInt(); }
     QVector<QPointF> Points(void) { return list_points_; }
     void AddPoint(const QPointF& pt) { return list_points_.push_back(pt); }
+    virtual QGraphicsItem* returnItem(void) { return &path_item_; }
 
     QGraphicsLineItem path_item_;
 private:

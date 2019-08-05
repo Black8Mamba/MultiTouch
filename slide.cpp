@@ -8,24 +8,21 @@ Slide::Slide(QObject *parent)
 {
     this->is_drawing_ = false;
     this->index_ = 0;
-    this->count = 0;
 }
 
 Slide::~Slide()
 {
-    //thread_.stop();
+    ;
 }
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
 {
-    count++;
+#if 1
     if (item_map_.keys().contains(id)) {
 
         InkData *dt = item_map_.value(id);
-        MyPathItem *my_item = static_cast<MyPathItem *>(dt->element_);
         if (dt->element_) {
-            //QGraphicsScene::removeItem(dt->element_);
-            QGraphicsScene::removeItem(static_cast<QGraphicsItem*>(&my_item->path_item_));
+            QGraphicsScene::removeItem(dt->element_->returnItem());
         }
         if (dt->temp_item_.size() > 1) {
             for (int i = 0; i < dt->temp_item_.size(); ++i)
@@ -35,6 +32,7 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
         delete dt;
         item_map_.remove(id);
     }
+#endif
 
     InkData *dt = new InkData;
     dt->pre_point_ = pt;
@@ -60,15 +58,12 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
             this->DrawTo(dt, to);
             dt->pre_point_ = to;
         }
-
-        //this->DrawTo(dt, to);
-        //dt->pre_point_ = to;
     }
 }
 
 void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
-    count--;
+    //count--;
     Q_UNUSED(pt);
 
     if (item_map_.keys().contains(id)) {
@@ -80,11 +75,10 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
         dt->temp_item_.clear();
         dt->element_->SetColor(ink_color_);
         dt->element_->SetThickness(ink_thickness_);
-        dt->element_->Render();//
-        //QGraphicsScene::addItem(dt->element_);
-        MyPathItem* my_path = static_cast<MyPathItem*>(dt->element_);
-        QGraphicsScene::addItem(static_cast<QGraphicsItem*>(&my_path->path_item_));
-        all_item_.insert(index_++, static_cast<QGraphicsItem*>(&my_path->path_item_));
+        dt->element_->Render();
+
+        QGraphicsScene::addItem(dt->element_->returnItem());
+        all_item_.insert(index_++, dt->element_->returnItem());
         item_map_.remove(id);
     }
 }
@@ -92,7 +86,6 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
 void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 #if 0
-
     if (!is_touch_mode_) {
         this->is_drawing_ = true;
         this->OnDeviceDown(event->scenePos());
@@ -185,8 +178,6 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
         qDebug() << li << endl;
         dt->temp_item_.push_back(li);
     }
-
-    //qDebug() << "typeid: " << typeid(p).name() << endl;
 }
 
 

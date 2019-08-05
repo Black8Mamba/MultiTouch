@@ -1,12 +1,9 @@
-#ifndef KMP_H
-#define KMP_H
+#ifndef EPT_H
+#define EPT_H
 
-namespace KMP_{
+namespace EPT{
 
     enum ElementPropertyType{
-        EPT_Id,
-        EPT_Locked,
-        EPT_Visibiled,
         EPT_Color,
         EPT_Thickness,
         EPT_Layer
