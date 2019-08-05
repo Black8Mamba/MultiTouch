@@ -85,7 +85,7 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
 
 void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-#if 0
+#if 1
     if (!is_touch_mode_) {
         this->is_drawing_ = true;
         this->OnDeviceDown(event->scenePos());
@@ -95,7 +95,7 @@ void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Slide::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-#if 0
+#if 1
     qDebug() << "move " << is_touch_mode_ << endl;
     if (!is_touch_mode_) {
         if (this->is_drawing_) {
@@ -107,7 +107,7 @@ void Slide::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Slide::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-#if 0
+#if 1
     if (!is_touch_mode_){
         if (this->is_drawing_) {
             this->is_drawing_ = false;

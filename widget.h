@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include "mythread.h"
 #include "rawtouchevent.h"
+#include <QTimer>
 
 namespace Ui {
 class Widget;
@@ -26,10 +27,12 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    virtual bool viewportEvent(QEvent *event);   
+    virtual bool viewportEvent(QEvent *event);
+    //void timerEvent(QTimerEvent *event);
 
 private slots:
     void UpdateDataSlot(HidMtFingerReport *finger_report);
+    void HandleTimeOut(void);
 
     void on_pushButton_clicked();
 
@@ -38,12 +41,18 @@ private slots:
     void on_thickness_currentIndexChanged(int index);
 
 private:
+    void InitTimerMap();
+    void DeleteTimerMap();
+
+private:
     Slide *current_slide_;
     bool is_touch_mode_;
     int data_source_;
 
     MyThread thread_;
     RawTouchEvent event_;
+    QTimer timer_;
+    QMap<int, QTimer*> timer_map_;
     Ui::Widget *ui;
 
 signals:

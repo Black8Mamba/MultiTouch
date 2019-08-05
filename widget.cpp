@@ -2,7 +2,6 @@
 #include "slide.h"
 #include "ui_widget.h"
 #include <QSettings>
-
 #include <QPushButton>
 #include <QTouchEvent>
 #include <QEvent>
@@ -15,8 +14,7 @@ Widget::Widget(QWidget *parent):
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
-
-
+    InitTimerMap();
 
     this->setInteractive(true);
     this->setOptimizationFlag(QGraphicsView::IndirectPainting);
@@ -24,8 +22,6 @@ Widget::Widget(QWidget *parent):
 
     this->setAttribute(Qt::WA_AcceptTouchEvents);
     this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
-    //this->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
-    //this->viewport()->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents);
 
     setRenderHint(QPainter::Antialiasing, true);
 
@@ -35,7 +31,7 @@ Widget::Widget(QWidget *parent):
     this->resize(1300, 1000);
 
     slide->SetColor(Qt::black);//color
-    slide->SetThickness(1); //line width
+    slide->SetThickness(3); //line width
 
     this->current_slide_ = slide;
 
@@ -59,6 +55,8 @@ Widget::~Widget()
 {
     if (data_source_ == 1)
         thread_.stop();
+    timer_.stop();
+    DeleteTimerMap();
 }
 
 void Widget::SetInkColor(const QColor color)
@@ -130,8 +128,9 @@ bool Widget::viewportEvent(QEvent *event)
             return true;
         }
    }
-   return QGraphicsView::viewportEvent(event); //must
+    return QGraphicsView::viewportEvent(event); //must
 }
+
 
 void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 {
@@ -148,18 +147,41 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
            switch(tp.state()) {
            case Qt::TouchPointPressed:
                this->current_slide_->OnDeviceDown(scene_pos, tp.id());
+               timer_map_.value(tp.id())->start(200);//200ms
+               timer_map_.value(tp.id())->setProperty("id", QVariant(tp.id()));
+               this->is_touch_mode_ = true;
+               this->current_slide_->SetTouchMode(true);
+               qDebug() << "timer1" << endl;
                break;
            case Qt::TouchPointMoved:
+               timer_map_.value(tp.id())->start(200);
                this->current_slide_->OnDeviceMove(scene_pos, tp.id());
+               qDebug() << "timer2" << endl;
                break;
            case Qt::TouchPointReleased:
+               if (timer_map_.value(tp.id())->isActive())
+                    timer_map_.value(tp.id())->stop();
                this->current_slide_->OnDeviceUp(scene_pos, tp.id());
+               this->is_touch_mode_ = false;
+               this->current_slide_->SetTouchMode(false);
+               qDebug() << "timer3" << endl;
                break;
            default:
                break;
            }
         }
     }
+}
+
+void Widget::HandleTimeOut()
+{
+    this->is_touch_mode_ = false;
+    this->current_slide_->SetTouchMode(false);
+
+    int id = sender()->property("id").toInt();
+    this->current_slide_->OnDeviceUp(QPointF(), id);
+
+    timer_map_.value(id)->stop();
 }
 
 
@@ -169,7 +191,7 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 void Widget::on_pushButton_clicked()
 {
     qDebug() << this->current_slide_->GetItemMap().size() << endl;
-#if 1
+
     if (this->current_slide_->GetItemMap().size() > 0) {
         for (QMap<int, QGraphicsItem*>::iterator it = this->current_slide_->GetItemMap().begin();
              it != this->current_slide_->GetItemMap().end(); it++) {
@@ -180,7 +202,6 @@ void Widget::on_pushButton_clicked()
         //qDebug() <<"count :" << this->current_slide_->count << endl;
     }
 
-#endif
         if (this->current_slide_->GetInkMap().size() > 0) {
             for (QMap<int, InkData*>::iterator it = this->current_slide_->GetInkMap().begin();
                  it != this->current_slide_->GetInkMap().end(); ++it) {
@@ -221,4 +242,21 @@ void Widget::on_thickness_currentIndexChanged(int index)
 {
     int thickness = ui->thickness->currentIndex()+1;
     this->SetInkThickness(thickness);
+}
+
+void Widget::InitTimerMap()
+{
+    for (int i = 0; i < 10; ++i) {
+        timer_map_.insert(i, new QTimer(this));
+        connect(timer_map_[i], SIGNAL(timeout()), this, SLOT(HandleTimeOut()));
+    }
+}
+
+void Widget::DeleteTimerMap()
+{
+    for (QMap<int, QTimer*>::iterator it = timer_map_.begin();
+         it != timer_map_.end(); it++) {
+        delete(it.value());
+    }
+    timer_map_.clear();
 }
