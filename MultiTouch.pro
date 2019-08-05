@@ -32,7 +32,8 @@ SOURCES += \
     device_node_identify.cpp \
     mythread.cpp \
     touch_data_receive.c \
-    rawtouchevent.cpp
+    rawtouchevent.cpp \
+    graphicsfactory.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     mythread.h \
     touch_data_receive.h \
     rawtouchevent.h \
-    ept.h
+    ept.h \
+    graphicsfactory.h
 
 FORMS += \
         mainwindow.ui \

@@ -181,3 +181,4 @@ void MyLineItem::Initialize()
     path_item_.setData( EPT::EPT_Color,v);
     path_item_.setData( EPT::EPT_Thickness,QVariant(4));
 }
+

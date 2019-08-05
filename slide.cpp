@@ -8,6 +8,7 @@ Slide::Slide(QObject *parent)
 {
     this->is_drawing_ = false;
     this->index_ = 0;
+    this->graphics_type_ = "Ellipse";
 }
 
 Slide::~Slide()
@@ -17,7 +18,6 @@ Slide::~Slide()
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
 {
-#if 1
     if (item_map_.keys().contains(id)) {
 
         InkData *dt = item_map_.value(id);
@@ -32,20 +32,13 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
         delete dt;
         item_map_.remove(id);
     }
-#endif
 
     InkData *dt = new InkData;
     dt->pre_point_ = pt;
-    //dt->element_ = new PathElement;
-    //dt->element_ = new RectItem;
-   dt->element_ = new MyPathItem;
-    //dt->element_ = new MyEllipseItem;
-   // dt->element_ = dynamic_cast<MyQGraphicsItem*>(new MyRectItem);
-   // dt->element_ = new MyLineItem;
+    dt->element_ = factory_.CreateGraphicsItem(graphics_type_);
     dt->element_->AddPoint(pt);
     item_map_.insert(id, dt);
     this->DrawStart(dt);
-    //this->all_ink_.insert(index_++, dt);
 }
 
 void Slide::OnDeviceMove(const QPointF &pt, int id)
@@ -63,7 +56,6 @@ void Slide::OnDeviceMove(const QPointF &pt, int id)
 
 void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
-    //count--;
     Q_UNUSED(pt);
 
     if (item_map_.keys().contains(id)) {

@@ -40,6 +40,8 @@ private slots:
 
     void on_thickness_currentIndexChanged(int index);
 
+    void on_GraphicsType_currentIndexChanged(int index);
+
 private:
     void InitTimerMap();
     void DeleteTimerMap();
@@ -54,10 +56,6 @@ private:
     QTimer timer_;
     QMap<int, QTimer*> timer_map_;
     Ui::Widget *ui;
-
-signals:
-    void SlideChangedBefore(void);
-    void SlideChangedAfter(void);
 };
 
 #endif // WIDGET_H

@@ -13,113 +13,136 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>20</y>
-     <width>80</width>
-     <height>23</height>
+     <x>0</x>
+     <y>0</y>
+     <width>160</width>
+     <height>112</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Clear</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>60</y>
-     <width>79</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Green</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Red</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Black</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Yellow</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Blue</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QComboBox" name="thickness">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>100</y>
-     <width>79</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>width:1</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:2</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:3</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:4</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:5</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:6</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:7</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:8</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:9</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>width:10</string>
-    </property>
-   </item>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="comboBox">
+      <item>
+       <property name="text">
+        <string>Green</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Red</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Black</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Yellow</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Blue</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="thickness">
+      <item>
+       <property name="text">
+        <string>width:1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:6</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:8</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:9</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>width:10</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="GraphicsType">
+      <item>
+       <property name="text">
+        <string>Path</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Rect</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Ellipse</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Line</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Erase</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

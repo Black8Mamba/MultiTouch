@@ -71,10 +71,8 @@ void Widget::SetInkThickness(int thickness)
 
 void Widget::SetScene(Slide *scene)
 {
-    Q_EMIT SlideChangedBefore();
     QGraphicsView::setScene(scene);
     this->current_slide_ = scene;
-    Q_EMIT SlideChangedAfter();
 }
 
 void Widget::resizeEvent(QResizeEvent *event)
@@ -94,12 +92,10 @@ bool Widget::viewportEvent(QEvent *event)
             QList<QTouchEvent::TouchPoint> touch_points = touch_event->touchPoints();
             if (ev_type == QEvent::TouchBegin) {
                 this->is_touch_mode_ = true;
-                this->current_slide_->SetTouchMode(true);
-                qDebug() << "true true true true true" << endl;
+                this->current_slide_->SetTouchMode(true);;
             } else if (ev_type == QEvent::TouchEnd) {
                 this->is_touch_mode_ = false;
                 this->current_slide_->SetTouchMode(false);
-                qDebug() << "false false false fasle" << endl;
             }
 
             foreach (const QTouchEvent::TouchPoint tp, touch_points) {
@@ -110,15 +106,12 @@ bool Widget::viewportEvent(QEvent *event)
                switch(tp.state()) {
                case Qt::TouchPointPressed:
                    this->current_slide_->OnDeviceDown(scene_pos, tp.id());
-                   qDebug() << "Press" << endl;
                    break;
                case Qt::TouchPointMoved:
-                   this->current_slide_->OnDeviceMove(scene_pos, tp.id());
-                   qDebug() << "Move" << endl;
+                   this->current_slide_->OnDeviceMove(scene_pos, tp.id());;
                    break;
                case Qt::TouchPointReleased:
-                   this->current_slide_->OnDeviceUp(scene_pos, tp.id());
-                   qDebug() << "Release" << endl;
+                   this->current_slide_->OnDeviceUp(scene_pos, tp.id());;
                    break;
                default:
                    break;
@@ -147,16 +140,14 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
            switch(tp.state()) {
            case Qt::TouchPointPressed:
                this->current_slide_->OnDeviceDown(scene_pos, tp.id());
-               timer_map_.value(tp.id())->start(200);//200ms
+               timer_map_.value(tp.id())->start(100);//200ms
                timer_map_.value(tp.id())->setProperty("id", QVariant(tp.id()));
                this->is_touch_mode_ = true;
                this->current_slide_->SetTouchMode(true);
-               qDebug() << "timer1" << endl;
                break;
            case Qt::TouchPointMoved:
-               timer_map_.value(tp.id())->start(200);
+               timer_map_.value(tp.id())->start(100);
                this->current_slide_->OnDeviceMove(scene_pos, tp.id());
-               qDebug() << "timer2" << endl;
                break;
            case Qt::TouchPointReleased:
                if (timer_map_.value(tp.id())->isActive())
@@ -164,7 +155,6 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
                this->current_slide_->OnDeviceUp(scene_pos, tp.id());
                this->is_touch_mode_ = false;
                this->current_slide_->SetTouchMode(false);
-               qDebug() << "timer3" << endl;
                break;
            default:
                break;
@@ -217,6 +207,7 @@ void Widget::on_pushButton_clicked()
 
 void Widget::on_comboBox_currentIndexChanged(int index)
 {
+    Q_UNUSED(index);
     switch(ui->comboBox->currentIndex())
     {
     case 0:
@@ -240,6 +231,7 @@ void Widget::on_comboBox_currentIndexChanged(int index)
 
 void Widget::on_thickness_currentIndexChanged(int index)
 {
+    Q_UNUSED(index);
     int thickness = ui->thickness->currentIndex()+1;
     this->SetInkThickness(thickness);
 }
@@ -259,4 +251,29 @@ void Widget::DeleteTimerMap()
         delete(it.value());
     }
     timer_map_.clear();
+}
+
+void Widget::on_GraphicsType_currentIndexChanged(int index)
+{
+    Q_UNUSED(index);
+    switch(ui->GraphicsType->currentIndex()) {
+    case 0:
+        this->current_slide_->SetGraphicsType("Path");
+        break;
+    case 1:
+        this->current_slide_->SetGraphicsType("Rect");
+        break;
+    case 2:
+        this->current_slide_->SetGraphicsType("Ellipse");
+        break;
+    case 3:
+        this->current_slide_->SetGraphicsType("Line");
+        break;
+    case 4:
+        this->current_slide_->SetGraphicsType("Path");
+        this->current_slide_->SetColor(Qt::white);
+        this->current_slide_->SetThickness(30);
+    default:
+        break;
+    }
 }

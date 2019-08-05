@@ -7,6 +7,7 @@
 #include <QVector>
 #include "pathelement.h"
 #include <QGraphicsSceneMouseEvent>
+#include "graphicsfactory.h"
 
 
 class InkData
@@ -32,6 +33,7 @@ public:
     void SetColor(const QColor& color) { this->ink_color_ = color; }
     void SetThickness(int w) { this->ink_thickness_ = w; }
     void SetTouchMode(bool mode) { this->is_touch_mode_ = mode; }
+    void SetGraphicsType(QString type) { this->graphics_type_ = type; }
     QMap<int, QGraphicsItem*>& GetItemMap(void) { return this->all_item_; }
     QMap<int, InkData*>& GetInkMap(void) { return this->item_map_; }
 
@@ -49,12 +51,15 @@ protected:
 private:
     QMap<int, InkData*> item_map_;
     QMap<int, QGraphicsItem*> all_item_;
-    //QMap<int, InkData*> all_ink_;
     int index_;
     QColor ink_color_;
     int ink_thickness_;
+
     bool is_drawing_;
     bool is_touch_mode_;
+
+    GraphicsFactory factory_;
+    QString graphics_type_;
 };
 
 #endif // SLIDE_H
