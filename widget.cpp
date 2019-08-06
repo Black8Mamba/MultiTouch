@@ -34,12 +34,14 @@ Widget::Widget(QWidget *parent):
     slide->SetThickness(3); //line width
 
     this->current_slide_ = slide;
+    this->current_slide_->SetGraphicsType("Path");
 
-    QSettings *configIni = new QSettings("para.ini", QSettings::IniFormat);
-    data_source_ = configIni->value("Setting/DataSource").toInt();
+    QSettings configIni("para.ini", QSettings::IniFormat);
+    data_source_ = configIni.value("Setting/DataSource").toInt();
 
     //0:inputEvent
     //1:Raw
+    //2:datafile
     qDebug() << "DataSource" << data_source_ << endl;
 
     this->current_slide_->SetTouchMode(false);
@@ -47,7 +49,8 @@ Widget::Widget(QWidget *parent):
      qRegisterMetaType<HidMtFingerReport*>("HidMtFingerReport*");
      connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport*)),
                 this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
-     if (data_source_ == 1)
+
+     if (data_source_ != 0)
         thread_.start();
 }
 
@@ -127,6 +130,9 @@ bool Widget::viewportEvent(QEvent *event)
 
 void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 {
+
+    static int count = 0;
+    qDebug() << "receive:count:" << ++count<< endl;
     qDebug() << "geometry:" << this->geometry() << endl;
     qDebug() << "framGeometry:" << this->frameGeometry() << endl;
     event_.EventUpdate(*finger_report, this->frameGeometry());
