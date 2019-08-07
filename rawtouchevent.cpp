@@ -4,7 +4,8 @@
 RawTouchEvent::RawTouchEvent() //: event_type_(RawTouchEvent::RawTouchEnd)
 {
     point_list_.reserve(10);
-    memset(&this->finger_report, 0, sizeof(this->finger_report));
+    //memset(&this->finger_report, 0, sizeof(this->finger_report));
+    this->finger_report_ = NULL;
 }
 
 void RawTouchEvent::EventUpdate(HidMtFingerReport &finger_report, QRect rect)
@@ -28,49 +29,32 @@ void RawTouchEvent::EventUpdate(HidMtFingerReport &finger_report, QRect rect)
         } else { //up
             map_[finger_report.finger_rpt[i].contact_id] = Qt::TouchPointReleased;
         }
-        TouchPoint point(finger_report.finger_rpt[i].contact_id, map_[i], QPointF(x, y));
+
+        TouchPoint point(finger_report.finger_rpt[i].contact_id, map_[finger_report.finger_rpt[i].contact_id], QPointF(x, y));
         point_list_.push_back(point);
     }
 }
 
 bool RawTouchEvent::IsTouchUpdate(HidMtFingerReport &finger_report)
 {
-    if (this->finger_report.count != finger_report.count)
+    if (this->finger_report_ == NULL)
+        return true;
+    if (this->finger_report_->count != finger_report.count)
         return true;
     else {
-        for (int i = 0; i < this->finger_report.count; ++i) {
-            if (GetTipSwitch(this->finger_report, i) !=
+        for (int i = 0; i < this->finger_report_->count; ++i) {
+            if (GetTipSwitch(*(this->finger_report_), i) !=
                     GetTipSwitch(finger_report, i))
                 return true;
-            if (GetX(this->finger_report, i) !=
+            if (GetX(*(this->finger_report_), i) !=
                     GetX(finger_report, i))
                 return true;
-            if (GetY(this->finger_report, i) !=
+            if (GetY(*(this->finger_report_), i) !=
                     GetY(finger_report, i))
                 return true;
         }
         return false;
     }
-}
-
-bool RawTouchEvent::IsTouchStart(HidMtFingerReport &finger_report)
-{
-    if (this->finger_report.count == 1 &&
-            this->finger_report.finger_rpt[0].tip_switch == 1)
-        return true;
-    else
-        return false;
-}
-
-bool RawTouchEvent::IsTouchEnd(HidMtFingerReport &finger_report)
-{
-    qDebug() << "enter TouchEnd" << endl;
-    qDebug() << finger_report.finger_rpt[0].tip_switch << endl;
-    if (finger_report.count == 1 &&
-            finger_report.finger_rpt[0].tip_switch == 0)
-        return true;
-    else
-        return false;
 }
 
 bool RawTouchEvent::GetTipSwitch(HidMtFingerReport &finger_report, int index)

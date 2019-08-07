@@ -48,7 +48,10 @@ Widget::Widget(QWidget *parent):
 
      qRegisterMetaType<HidMtFingerReport*>("HidMtFingerReport*");
      connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport*)),
-                this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
+               this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
+    // qRegisterMetaType<HidMtFingerReport>("HidMtFingerReport");
+    // connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport)),
+    //           this, SLOT(UpdateDataSlot(HidMtFingerReport)));
 
      if (data_source_ != 0)
         thread_.start();
@@ -78,6 +81,13 @@ void Widget::SetScene(Slide *scene)
     this->current_slide_ = scene;
 }
 
+void Widget::display(HidMtFingerReport *finger_report)
+{
+    for (int i = 0; i < finger_report->count; ++i) {
+        qDebug() << "id: " << finger_report->finger_rpt[i].contact_id << " " << finger_report->finger_rpt[i].tip_switch << endl;
+    }
+}
+
 void Widget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
@@ -104,7 +114,6 @@ bool Widget::viewportEvent(QEvent *event)
             foreach (const QTouchEvent::TouchPoint tp, touch_points) {
                QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
                qDebug() << touchPos << endl;
-
                QPointF scene_pos = this->mapToScene(touchPos.x(), touchPos.y());
                switch(tp.state()) {
                case Qt::TouchPointPressed:
@@ -127,37 +136,31 @@ bool Widget::viewportEvent(QEvent *event)
     return QGraphicsView::viewportEvent(event); //must
 }
 
-
 void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
+//void Widget::UpdateDataSlot(HidMtFingerReport finger_report)
 {
-
-    static int count = 0;
-    qDebug() << "receive:count:" << ++count<< endl;
-    qDebug() << "geometry:" << this->geometry() << endl;
-    qDebug() << "framGeometry:" << this->frameGeometry() << endl;
     event_.EventUpdate(*finger_report, this->frameGeometry());
-
+    display(finger_report);
     if (event_.IsTouchUpdate(*finger_report)) {
-        event_.SetFingerReport(*finger_report);
+        event_.SetFingerReport(finger_report);
         QList<RawTouchEvent::TouchPoint> *touch_points = event_.touchPoints();//optimization
         foreach (const RawTouchEvent::TouchPoint tp, *touch_points) {
-           QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
-           QPointF scene_pos = this->mapToScene(touchPos.x(), touchPos.y());
+             QPointF scene_pos = this->mapToScene(tp.pos().x(), tp.pos().y());
            switch(tp.state()) {
            case Qt::TouchPointPressed:
                this->current_slide_->OnDeviceDown(scene_pos, tp.id());
-               timer_map_.value(tp.id())->start(100);//200ms
-               timer_map_.value(tp.id())->setProperty("id", QVariant(tp.id()));
+              // timer_map_.value(tp.id())->start(100);//200ms
+             //  timer_map_.value(tp.id())->setProperty("id", QVariant(tp.id()));
                this->is_touch_mode_ = true;
                this->current_slide_->SetTouchMode(true);
                break;
            case Qt::TouchPointMoved:
-               timer_map_.value(tp.id())->start(100);
+             //  timer_map_.value(tp.id())->start(100);
                this->current_slide_->OnDeviceMove(scene_pos, tp.id());
                break;
            case Qt::TouchPointReleased:
-               if (timer_map_.value(tp.id())->isActive())
-                    timer_map_.value(tp.id())->stop();
+              // if (timer_map_.value(tp.id())->isActive())
+              //      timer_map_.value(tp.id())->stop();
                this->current_slide_->OnDeviceUp(scene_pos, tp.id());
                this->is_touch_mode_ = false;
                this->current_slide_->SetTouchMode(false);
@@ -178,6 +181,7 @@ void Widget::HandleTimeOut()
     this->current_slide_->OnDeviceUp(QPointF(), id);
 
     timer_map_.value(id)->stop();
+    this->display(this->event_.finger_report_);
 }
 
 
@@ -192,10 +196,8 @@ void Widget::on_pushButton_clicked()
         for (QMap<int, QGraphicsItem*>::iterator it = this->current_slide_->GetItemMap().begin();
              it != this->current_slide_->GetItemMap().end(); it++) {
             this->current_slide_->removeItem(it.value());
-           // delete it.value();
         }
         this->current_slide_->GetItemMap().clear();
-        //qDebug() <<"count :" << this->current_slide_->count << endl;
     }
 
         if (this->current_slide_->GetInkMap().size() > 0) {

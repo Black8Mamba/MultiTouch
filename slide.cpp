@@ -18,6 +18,7 @@ Slide::~Slide()
 
 void Slide::OnDeviceDown(const QPointF &pt, int id)
 {
+#if 1
     if (item_map_.keys().contains(id)) {
 
         InkData *dt = item_map_.value(id);
@@ -32,6 +33,7 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
         delete dt;
         item_map_.remove(id);
     }
+#endif
 
     InkData *dt = new InkData;
     dt->pre_point_ = pt;
@@ -88,7 +90,7 @@ void Slide::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Slide::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 #if 1
-    qDebug() << "move " << is_touch_mode_ << endl;
+   // qDebug() << "move " << is_touch_mode_ << endl;
     if (!is_touch_mode_) {
         if (this->is_drawing_) {
             this->OnDeviceMove(event->scenePos());
@@ -113,7 +115,7 @@ void Slide::DrawStart(InkData *dt)
 {
     if (dt == NULL)
         return ;
-    qDebug() <<"draw start" << endl;
+   // qDebug() <<"draw start" << endl;
     qreal x = dt->pre_point_.x() - ink_thickness_/2.f;
     qreal y = dt->pre_point_.y() - ink_thickness_/2.f;
 
@@ -126,9 +128,9 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
 {
     if (dt == NULL)
         return ;
-    qDebug() <<"draw to" << endl;
+   // qDebug() <<"draw to" << endl;
     MyQGraphicsItem &class_type = *(dt->element_);
-    qDebug() << typeid(class_type).name()<< endl;
+   // qDebug() << typeid(class_type).name()<< endl;
     if (typeid(class_type).name() == string("10MyRectItem")) {
          QGraphicsScene::removeItem(dt->temp_item_.back());
          dt->temp_item_.pop_back();
@@ -165,9 +167,9 @@ void Slide::DrawTo(InkData *dt, const QPointF &to)//use RTTI to identify
                 dt->pre_point_.y(),
                 QPen(QBrush(ink_color_), ink_thickness_, Qt::SolidLine,
                      Qt::RoundCap, Qt::RoundJoin));
-        qDebug() <<"Point_start:" << dt->element_->list_points_[0] << endl;
-        qDebug() <<"Point_end:" << dt->pre_point_ << endl;
-        qDebug() << li << endl;
+        //qDebug() <<"Point_start:" << dt->element_->list_points_[0] << endl;
+       // qDebug() <<"Point_end:" << dt->pre_point_ << endl;
+      //  qDebug() << li << endl;
         dt->temp_item_.push_back(li);
     }
 }

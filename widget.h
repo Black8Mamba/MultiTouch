@@ -24,6 +24,7 @@ public:
 
     Slide* CurrentSlide(void) const {return this->current_slide_; }
     void SetScene(Slide *scene);
+    void display(HidMtFingerReport *finger_report);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -31,6 +32,7 @@ protected:
     //void timerEvent(QTimerEvent *event);
 
 private slots:
+    //void UpdateDataSlot(HidMtFingerReport finger_report);
     void UpdateDataSlot(HidMtFingerReport *finger_report);
     void HandleTimeOut(void);
 

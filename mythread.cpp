@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <cstring>
 #include <QSettings>
+#include <cstdlib>
 
 MyThread::MyThread()
 {
@@ -12,7 +13,7 @@ MyThread::MyThread()
     path_ =  configIni.value("DataFilePath/Path").toString();
     data_source_ = configIni.value("Setting/DataSource").toInt();
 
-    memset(&finger_report_, 0, sizeof(finger_report_));
+    //memset(&finger_report_, 0, sizeof(finger_report_));
     string device_node = device::GetDeviceNode("/dev/", "input0");
     if (device_node.size() == 0) {
         qDebug() << "get device failed" << endl;
@@ -45,20 +46,24 @@ MyThread::~MyThread()
 void MyThread:: run()
 {
     stopped_ = false;
-
+    int count = 0;
     while(!stopped_) {
+        HidMtFingerReport *finger_report_ = reinterpret_cast<HidMtFingerReport*>(malloc(sizeof(HidMtFingerReport)));
         if (data_source_ == 1) {
-            if (TouchDataReceive(fd_, reinterpret_cast<unsigned char*>(&finger_report_), sizeof(finger_report_)) == 0)
+            if (TouchDataReceive(fd_, reinterpret_cast<unsigned char*>(finger_report_), sizeof(HidMtFingerReport)) == 0)
                 break;
               //TouchDataSend(fd_data_, reinterpret_cast<unsigned char*>(&finger_report_), sizeof(finger_report_));
         } else if (data_source_ == 2) {
             qDebug() << "2" << endl;
-            if (TouchDataReceive(fd_data_, reinterpret_cast<unsigned char*>(&finger_report_), sizeof(finger_report_)) == 0)
+            if (TouchDataReceive(fd_data_, reinterpret_cast<unsigned char*>(finger_report_), sizeof(HidMtFingerReport)) == 0)
                 break;
         }
-        emit UpdateDataSignal(&finger_report_);
+        //display(finger_report_);
+        emit UpdateDataSignal(finger_report_);
+       // emit UpdateDataSignal(finger_report_);
+        //qDebug() << "send count:" << ++count << endl;
         if (data_source_ == 2)
-            msleep(20);
+            msleep(15);
     }
     stopped_ = false;
 }
@@ -67,4 +72,11 @@ void MyThread::stop()
 {
     stopped_ = true;
     qDebug() << "thread exit:" << endl;
+}
+
+void MyThread::display(HidMtFingerReport *finger_report)
+{
+    for (int i = 0; i < finger_report->count; ++i) {
+        qDebug() << "id: " << finger_report->finger_rpt[i].contact_id << " " << finger_report->finger_rpt[i].tip_switch << endl;
+    }
 }

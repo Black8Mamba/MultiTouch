@@ -7,11 +7,6 @@
 
 class RawTouchEvent
 {
-    //enum Type{
-    //    RawTouchBegin = 1,
-    //    RawTouchUpdate = 2,
-    //    RawTouchEnd = 3,
-    //};
 public:
     class TouchPoint {
     public:
@@ -30,12 +25,15 @@ public:
     RawTouchEvent();
     void EventUpdate(HidMtFingerReport& finger_report, QRect rect);
     bool IsTouchUpdate(HidMtFingerReport& finger_report);
-    bool IsTouchStart(HidMtFingerReport& finger_report);
-    bool IsTouchEnd(HidMtFingerReport& finger_report);
     QList<RawTouchEvent::TouchPoint>* touchPoints() { return &point_list_; }
    // RawTouchEvent::Type type() const { return event_type_; }
-    void SetFingerReport(HidMtFingerReport &finger_report) { this->finger_report = finger_report; }
-
+    void SetFingerReport(HidMtFingerReport *finger_report)
+    {
+        if (this->finger_report_)
+            free(this->finger_report_);
+        this->finger_report_ = finger_report;
+    }
+HidMtFingerReport *finger_report_;
 private:
     bool GetTipSwitch(HidMtFingerReport& finger_report, int index);
     qint16 GetX(HidMtFingerReport& finger_report, int index);
@@ -43,7 +41,7 @@ private:
 
 private:
     QList<RawTouchEvent::TouchPoint> point_list_;
-    HidMtFingerReport finger_report;
+   // HidMtFingerReport *finger_report_;
     //RawTouchEvent::Type event_type_;
     QMap<int, Qt::TouchPointState> map_;
 };

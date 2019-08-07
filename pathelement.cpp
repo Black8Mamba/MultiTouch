@@ -2,6 +2,7 @@
 #include <QUuid>
 #include <QBrush>
 #include <QPen>
+#include <QDebug>
 
 MyPathItem::MyPathItem()
 {
@@ -13,10 +14,13 @@ void MyPathItem::Render()
     if (this->list_points_.size() < 1)
         return ;
     QPainterPath path;
+
     path.moveTo(this->list_points_[0]);
+
     for (int i = 1; i < this->list_points_.size(); ++i) {
         path.lineTo(this->list_points_[i]);
     }
+    path.lineTo(QPointF(this->list_points_.last().x()+0.1, this->list_points_.last().y()+0.1));
 
     path_item_.setPen(QPen(QBrush(Color()), (qreal)Thickness(), Qt::SolidLine,
                            Qt::RoundCap, Qt::RoundJoin));
