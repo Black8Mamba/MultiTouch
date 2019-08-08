@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     pathelement.cpp \
     slide.cpp \
     widget.cpp \
@@ -36,7 +35,6 @@ SOURCES += \
     graphicsfactory.cpp
 
 HEADERS += \
-        mainwindow.h \
     pathelement.h \
     slide.h \
     widget.h \
@@ -48,5 +46,4 @@ HEADERS += \
     graphicsfactory.h
 
 FORMS += \
-        mainwindow.ui \
     widget.ui

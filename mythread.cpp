@@ -7,29 +7,27 @@
 MyThread::MyThread()
 {
     stopped_ = false;
-    fd_ = 0;
+    fd_dev_ = 0;
     fd_data_ = 0;
-    QSettings configIni("para.ini", QSettings::IniFormat);
+    QSettings configIni(CVT_DEF_CONFIG_FILE_PATH, QSettings::IniFormat);
     path_ =  configIni.value("DataFilePath/Path").toString();
     data_source_ = configIni.value("Setting/DataSource").toInt();
 
-    //memset(&finger_report_, 0, sizeof(finger_report_));
-    string device_node = device::GetDeviceNode("/dev/", "input0");
+    string device_node = device::GetDeviceNode(CVT_DEF_HID_DEV_PATH, CVT_DEF_HID_PHY_INFO);
     if (device_node.size() == 0) {
         qDebug() << "get device failed" << endl;
         exit(-1);
     }
 
-    if (data_source_ == 1) {
-        fd_ = open(device_node.c_str(), O_RDONLY);
-        if (fd_ < 0) {
+    if (data_source_ == RAW_DATA) {
+        fd_dev_ = open(device_node.c_str(), O_RDONLY);
+        if (fd_dev_ < 0) {
             qDebug() << "open device failed" << endl;
             exit(-1);
         }
-        qDebug() << "fd is " << fd_ << endl;
     }
 
-    if (data_source_ == 2) {
+    if (data_source_ == DATA_FILE) {
         fd_data_ = open(path_.toStdString().c_str(), O_RDWR);
         if (fd_data_ < 0) {
             qDebug() << "open datafile failed" << endl;
@@ -39,31 +37,25 @@ MyThread::MyThread()
 }
 MyThread::~MyThread()
 {
-    close(fd_);
+    close(fd_dev_);
     close(fd_data_);
 }
 
 void MyThread:: run()
 {
     stopped_ = false;
-    int count = 0;
     while(!stopped_) {
         HidMtFingerReport *finger_report_ = reinterpret_cast<HidMtFingerReport*>(malloc(sizeof(HidMtFingerReport)));
-        if (data_source_ == 1) {
-            if (TouchDataReceive(fd_, reinterpret_cast<unsigned char*>(finger_report_), sizeof(HidMtFingerReport)) == 0)
+        if (data_source_ == RAW_DATA) {
+            if (TouchDataReceive(fd_dev_, reinterpret_cast<unsigned char*>(finger_report_), sizeof(HidMtFingerReport)) == 0)
                 break;
-              //TouchDataSend(fd_data_, reinterpret_cast<unsigned char*>(&finger_report_), sizeof(finger_report_));
-        } else if (data_source_ == 2) {
-            qDebug() << "2" << endl;
+        } else if (data_source_ == DATA_FILE) {
             if (TouchDataReceive(fd_data_, reinterpret_cast<unsigned char*>(finger_report_), sizeof(HidMtFingerReport)) == 0)
                 break;
         }
-        //display(finger_report_);
         emit UpdateDataSignal(finger_report_);
-       // emit UpdateDataSignal(finger_report_);
-        //qDebug() << "send count:" << ++count << endl;
-        if (data_source_ == 2)
-            msleep(15);
+        if (data_source_ == DATA_FILE)
+            msleep(20);
     }
     stopped_ = false;
 }
@@ -71,12 +63,4 @@ void MyThread:: run()
 void MyThread::stop()
 {
     stopped_ = true;
-    qDebug() << "thread exit:" << endl;
-}
-
-void MyThread::display(HidMtFingerReport *finger_report)
-{
-    for (int i = 0; i < finger_report->count; ++i) {
-        qDebug() << "id: " << finger_report->finger_rpt[i].contact_id << " " << finger_report->finger_rpt[i].tip_switch << endl;
-    }
 }

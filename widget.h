@@ -3,9 +3,9 @@
 
 #include <QWidget>
 #include <QGraphicsView>
+#include <QTimer>
 #include "mythread.h"
 #include "rawtouchevent.h"
-#include <QTimer>
 
 namespace Ui {
 class Widget;
@@ -22,17 +22,14 @@ public:
     void SetInkColor(const QColor color);
     void SetInkThickness(int thickness);
 
-    Slide* CurrentSlide(void) const {return this->current_slide_; }
+    Slide* CurrentSlide(void) const { return this->current_slide_; }
     void SetScene(Slide *scene);
-    void display(HidMtFingerReport *finger_report);
 
 protected:
     void resizeEvent(QResizeEvent *event);
     virtual bool viewportEvent(QEvent *event);
-    //void timerEvent(QTimerEvent *event);
 
 private slots:
-    //void UpdateDataSlot(HidMtFingerReport finger_report);
     void UpdateDataSlot(HidMtFingerReport *finger_report);
     void HandleTimeOut(void);
 
@@ -50,7 +47,6 @@ private:
 
 private:
     Slide *current_slide_;
-    bool is_touch_mode_;
     int data_source_;
 
     MyThread thread_;

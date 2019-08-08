@@ -1,10 +1,10 @@
 #include "rawtouchevent.h"
 #include <QDebug>
 
-RawTouchEvent::RawTouchEvent() //: event_type_(RawTouchEvent::RawTouchEnd)
+
+RawTouchEvent::RawTouchEvent()
 {
     point_list_.reserve(10);
-    //memset(&this->finger_report, 0, sizeof(this->finger_report));
     this->finger_report_ = NULL;
 }
 
@@ -12,25 +12,27 @@ void RawTouchEvent::EventUpdate(HidMtFingerReport &finger_report, QRect rect)
 {
     point_list_.clear();
     for (int i = 0; i < finger_report.count; ++i) {
-        qint16 x = GetX(finger_report, i) * 1920/16384; //
-        qint16 y = GetY(finger_report, i) * 996/9600;   //
+        qint16 x = GetX(finger_report, i) * CVT_DEV_TOUCH_WINDOWS_WIDTH / CVT_DEF_TOUCH_DEV_WIDTH; //
+        qint16 y = GetY(finger_report, i) * CVT_DEV_TOUCH_WINDOWS_HEIGHT / CVT_DEF_TOUCH_DEV_HEIGHT;   //
         x = x - rect.x();
         y = y - rect.y();
 
         if (GetTipSwitch(finger_report, i)) {  //down or move
-            if (map_.count(finger_report.finger_rpt[i].contact_id) != 0) { //has record
+            if (map_.count(finger_report.finger_rpt[i].contact_id) != 0) { //have record
                 if (map_[finger_report.finger_rpt[i].contact_id] == Qt::TouchPointPressed)
                     map_[finger_report.finger_rpt[i].contact_id] = Qt::TouchPointMoved;
                 else if (map_[finger_report.finger_rpt[i].contact_id] == Qt::TouchPointReleased)
                     map_[finger_report.finger_rpt[i].contact_id] = Qt::TouchPointPressed;
-            } else { // has no record
+            } else { // have no record
                 map_.insert(finger_report.finger_rpt[i].contact_id, Qt::TouchPointPressed);
             }
         } else { //up
             map_[finger_report.finger_rpt[i].contact_id] = Qt::TouchPointReleased;
         }
 
-        TouchPoint point(finger_report.finger_rpt[i].contact_id, map_[finger_report.finger_rpt[i].contact_id], QPointF(x, y));
+        TouchPoint point(finger_report.finger_rpt[i].contact_id,
+                         map_[finger_report.finger_rpt[i].contact_id],
+                            QPointF(x, y));
         point_list_.push_back(point);
     }
 }
@@ -39,6 +41,7 @@ bool RawTouchEvent::IsTouchUpdate(HidMtFingerReport &finger_report)
 {
     if (this->finger_report_ == NULL)
         return true;
+
     if (this->finger_report_->count != finger_report.count)
         return true;
     else {
@@ -55,6 +58,15 @@ bool RawTouchEvent::IsTouchUpdate(HidMtFingerReport &finger_report)
         }
         return false;
     }
+}
+
+bool RawTouchEvent::IsTouchEnd(HidMtFingerReport &finger_report)
+{
+    for (int i = 0; i < finger_report.count; ++i) {
+        if (finger_report.finger_rpt[i].tip_switch)
+            return false;
+    }
+    return true;
 }
 
 bool RawTouchEvent::GetTipSwitch(HidMtFingerReport &finger_report, int index)

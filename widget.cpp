@@ -1,6 +1,4 @@
 #include "widget.h"
-#include "slide.h"
-#include "ui_widget.h"
 #include <QSettings>
 #include <QPushButton>
 #include <QTouchEvent>
@@ -8,13 +6,16 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QMenu>
+#include "slide.h"
+#include "ui_widget.h"
 
 Widget::Widget(QWidget *parent):
     QGraphicsView(parent),
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    InitTimerMap();
+   // InitTimerMap();
+
 
     this->setInteractive(true);
     this->setOptimizationFlag(QGraphicsView::IndirectPainting);
@@ -30,13 +31,14 @@ Widget::Widget(QWidget *parent):
     this->setSceneRect(0, 0, 1300, 1000);
     this->resize(1300, 1000);
 
-    slide->SetColor(Qt::black);//color
-    slide->SetThickness(3); //line width
+    slide->SetColor(Qt::green);//color
+    slide->SetThickness(1); //line width
+    slide->SetGraphicsType("Path"); //graphics
+    slide->SetTouchMode(false);
 
     this->current_slide_ = slide;
-    this->current_slide_->SetGraphicsType("Path");
 
-    QSettings configIni("para.ini", QSettings::IniFormat);
+    QSettings configIni(CVT_DEF_CONFIG_FILE_PATH, QSettings::IniFormat);
     data_source_ = configIni.value("Setting/DataSource").toInt();
 
     //0:inputEvent
@@ -44,25 +46,21 @@ Widget::Widget(QWidget *parent):
     //2:datafile
     qDebug() << "DataSource" << data_source_ << endl;
 
-    this->current_slide_->SetTouchMode(false);
-
      qRegisterMetaType<HidMtFingerReport*>("HidMtFingerReport*");
      connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport*)),
                this, SLOT(UpdateDataSlot(HidMtFingerReport*)));
-    // qRegisterMetaType<HidMtFingerReport>("HidMtFingerReport");
-    // connect(&thread_, SIGNAL(UpdateDataSignal(HidMtFingerReport)),
-    //           this, SLOT(UpdateDataSlot(HidMtFingerReport)));
 
-     if (data_source_ != 0)
+     if (data_source_ != INPUT_EVENT)
         thread_.start();
 }
 
 Widget::~Widget()
 {
-    if (data_source_ == 1)
+    if (data_source_ != INPUT_EVENT)
         thread_.stop();
-    timer_.stop();
-    DeleteTimerMap();
+   // timer_.stop();
+   // DeleteTimerMap();
+    delete this->current_slide_;
 }
 
 void Widget::SetInkColor(const QColor color)
@@ -81,13 +79,6 @@ void Widget::SetScene(Slide *scene)
     this->current_slide_ = scene;
 }
 
-void Widget::display(HidMtFingerReport *finger_report)
-{
-    for (int i = 0; i < finger_report->count; ++i) {
-        qDebug() << "id: " << finger_report->finger_rpt[i].contact_id << " " << finger_report->finger_rpt[i].tip_switch << endl;
-    }
-}
-
 void Widget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
@@ -97,24 +88,22 @@ void Widget::resizeEvent(QResizeEvent *event)
 
 bool Widget::viewportEvent(QEvent *event)
 {
-    if (data_source_ == 0) {
+    if (data_source_ == INPUT_EVENT) {
         QEvent::Type ev_type = event->type();
         if (ev_type == QEvent::TouchBegin || ev_type == QEvent::TouchUpdate
                 ||ev_type == QEvent::TouchEnd) {
             QTouchEvent *touch_event = static_cast<QTouchEvent*>(event);
             QList<QTouchEvent::TouchPoint> touch_points = touch_event->touchPoints();
             if (ev_type == QEvent::TouchBegin) {
-                this->is_touch_mode_ = true;
                 this->current_slide_->SetTouchMode(true);;
             } else if (ev_type == QEvent::TouchEnd) {
-                this->is_touch_mode_ = false;
                 this->current_slide_->SetTouchMode(false);
             }
 
             foreach (const QTouchEvent::TouchPoint tp, touch_points) {
                QPoint touchPos = QPoint(tp.pos().x(), tp.pos().y());
-               qDebug() << touchPos << endl;
                QPointF scene_pos = this->mapToScene(touchPos.x(), touchPos.y());
+
                switch(tp.state()) {
                case Qt::TouchPointPressed:
                    this->current_slide_->OnDeviceDown(scene_pos, tp.id());
@@ -137,13 +126,13 @@ bool Widget::viewportEvent(QEvent *event)
 }
 
 void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
-//void Widget::UpdateDataSlot(HidMtFingerReport finger_report)
 {
-    event_.EventUpdate(*finger_report, this->frameGeometry());
-    display(finger_report);
+            event_.EventUpdate(*finger_report, this->frameGeometry());
     if (event_.IsTouchUpdate(*finger_report)) {
+
         event_.SetFingerReport(finger_report);
-        QList<RawTouchEvent::TouchPoint> *touch_points = event_.touchPoints();//optimization
+
+        QList<RawTouchEvent::TouchPoint> *touch_points = event_.touchPoints();
         foreach (const RawTouchEvent::TouchPoint tp, *touch_points) {
              QPointF scene_pos = this->mapToScene(tp.pos().x(), tp.pos().y());
            switch(tp.state()) {
@@ -151,7 +140,6 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
                this->current_slide_->OnDeviceDown(scene_pos, tp.id());
               // timer_map_.value(tp.id())->start(100);//200ms
              //  timer_map_.value(tp.id())->setProperty("id", QVariant(tp.id()));
-               this->is_touch_mode_ = true;
                this->current_slide_->SetTouchMode(true);
                break;
            case Qt::TouchPointMoved:
@@ -162,8 +150,10 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
               // if (timer_map_.value(tp.id())->isActive())
               //      timer_map_.value(tp.id())->stop();
                this->current_slide_->OnDeviceUp(scene_pos, tp.id());
-               this->is_touch_mode_ = false;
-               this->current_slide_->SetTouchMode(false);
+
+               if (event_.IsTouchEnd(*finger_report)) {
+                     this->current_slide_->SetTouchMode(false);
+               }
                break;
            default:
                break;
@@ -174,19 +164,11 @@ void Widget::UpdateDataSlot(HidMtFingerReport *finger_report)
 
 void Widget::HandleTimeOut()
 {
-    this->is_touch_mode_ = false;
     this->current_slide_->SetTouchMode(false);
-
     int id = sender()->property("id").toInt();
     this->current_slide_->OnDeviceUp(QPointF(), id);
-
     timer_map_.value(id)->stop();
-    this->display(this->event_.finger_report_);
 }
-
-
-
-
 
 void Widget::on_pushButton_clicked()
 {
@@ -210,7 +192,6 @@ void Widget::on_pushButton_clicked()
             }
             this->current_slide_->GetInkMap().clear();
         }
-    //this->current_slide_->clear();
 }
 
 void Widget::on_comboBox_currentIndexChanged(int index)

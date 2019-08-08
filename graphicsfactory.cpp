@@ -5,7 +5,7 @@ GraphicsFactory::GraphicsFactory()
     ;
 }
 
-MyQGraphicsItem *GraphicsFactory::CreateGraphicsItem(QString type)
+MyQGraphicsItem* GraphicsFactory::CreateGraphicsItem(QString type)
 {
     if (type == "Path")
         return new MyPathItem;
@@ -16,6 +16,6 @@ MyQGraphicsItem *GraphicsFactory::CreateGraphicsItem(QString type)
     else if (type == "Line")
         return new MyLineItem;
     else
-        return NULL;
+        return Q_NULLPTR;
 }
 

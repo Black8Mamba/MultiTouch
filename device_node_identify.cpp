@@ -166,7 +166,7 @@ string GetDeviceNode(string device_dirent_path,
         return string("");
     }
 
-    for (int i = 0; i < device_list.size(); ++i) {
+    for (unsigned int i = 0; i < device_list.size(); ++i) {
         int fd = ::open(device_list[i].c_str(), O_RDWR);
         if (fd < 0) {
             std::cout << "Open device failed!" << std::endl;
@@ -184,8 +184,8 @@ string GetDeviceNode(string device_dirent_path,
             return string("");
         }
 
-        if (info.dev_info.product == PID   //匹配触摸屏的pid和vid
-                && info.dev_info.vendor == VID 
+        if (info.dev_info.product == CVT_DEF_HID_DEV_PID   //匹配触摸屏的pid和vid
+                && info.dev_info.vendor == CVT_DEF_HID_DEV_VID
                 && (strstr(info.hid_raw_phy, phy_info.c_str()) != NULL)) {
 
             node = device_list[i].c_str();

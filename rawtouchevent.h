@@ -5,16 +5,26 @@
 #include <QList>
 #include "touch_data_receive.h"
 
+#define CVT_DEF_TOUCH_DEV_WIDTH         16384
+#define CVT_DEF_TOUCH_DEV_HEIGHT        9600
+
+#define CVT_DEV_TOUCH_WINDOWS_WIDTH     1920
+#define CVT_DEV_TOUCH_WINDOWS_HEIGHT    996
+
+
 class RawTouchEvent
 {
 public:
     class TouchPoint {
     public:
+
         TouchPoint(int id = -1, Qt::TouchPointState state = Qt::TouchPointReleased, QPointF pos = QPointF(0, 0));
         ~TouchPoint();
+
         int id(void) const {return touch_id_; }
         Qt::TouchPointState state() const { return touch_state_; }
         QPointF pos() const { return touch_pos_; }
+
     private:
         int touch_id_;
         Qt::TouchPointState touch_state_;
@@ -22,18 +32,21 @@ public:
     };
 
 public:
+
     RawTouchEvent();
     void EventUpdate(HidMtFingerReport& finger_report, QRect rect);
     bool IsTouchUpdate(HidMtFingerReport& finger_report);
+    bool IsTouchEnd(HidMtFingerReport& finger_report);
     QList<RawTouchEvent::TouchPoint>* touchPoints() { return &point_list_; }
-   // RawTouchEvent::Type type() const { return event_type_; }
+    HidMtFingerReport* GetHidFingerReport() { return finger_report_; }
+
     void SetFingerReport(HidMtFingerReport *finger_report)
     {
         if (this->finger_report_)
             free(this->finger_report_);
         this->finger_report_ = finger_report;
     }
-HidMtFingerReport *finger_report_;
+
 private:
     bool GetTipSwitch(HidMtFingerReport& finger_report, int index);
     qint16 GetX(HidMtFingerReport& finger_report, int index);
@@ -41,8 +54,7 @@ private:
 
 private:
     QList<RawTouchEvent::TouchPoint> point_list_;
-   // HidMtFingerReport *finger_report_;
-    //RawTouchEvent::Type event_type_;
+    HidMtFingerReport *finger_report_;
     QMap<int, Qt::TouchPointState> map_;
 };
 

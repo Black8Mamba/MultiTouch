@@ -3,11 +3,11 @@
 
 namespace EPT{
 
-    enum ElementPropertyType{
-        EPT_Color,
-        EPT_Thickness,
-        EPT_Layer
-    };
+enum ElementPropertyType{
+    EPT_COLOR,
+    EPT_THICKNESS,
+    EPT_LAYER
+};
 }
 
-#endif // KMP
+#endif // EPT

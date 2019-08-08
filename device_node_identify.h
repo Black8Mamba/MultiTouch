@@ -17,8 +17,8 @@ using std::vector;
 using std::string;
 
 
-#define PID 0x11
-#define VID 0x222a
+#define CVT_DEF_HID_DEV_PID     0x11
+#define CVT_DEF_HID_DEV_VID     0x222a
 
 namespace device
 {
