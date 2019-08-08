@@ -1,4 +1,4 @@
-#include "pathelement.h"
+#include "path_element.h"
 #include <QBrush>
 #include <QPen>
 #include <QDebug>

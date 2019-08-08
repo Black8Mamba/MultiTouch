@@ -6,9 +6,9 @@
 #include <QObject>
 #include <QMap>
 #include <QVector>
-#include "pathelement.h"
+#include "path_element.h"
 #include <QGraphicsSceneMouseEvent>
-#include "graphicsfactory.h"
+#include "graphics_factory.h"
 
 
 class InkData

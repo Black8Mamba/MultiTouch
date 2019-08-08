@@ -25,25 +25,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    pathelement.cpp \
     slide.cpp \
     widget.cpp \
     device_node_identify.cpp \
-    mythread.cpp \
     touch_data_receive.c \
-    rawtouchevent.cpp \
-    graphicsfactory.cpp
+    graphics_factory.cpp \
+    path_element.cpp \
+    raw_touchevent.cpp \
+    thread.cpp
 
 HEADERS += \
-    pathelement.h \
     slide.h \
     widget.h \
     device_node_identify.h \
-    mythread.h \
     touch_data_receive.h \
-    rawtouchevent.h \
     ept.h \
-    graphicsfactory.h
+    graphics_factory.h \
+    path_element.h \
+    raw_touch_event.h \
+    thread.h
 
 FORMS += \
     widget.ui

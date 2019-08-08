@@ -1,4 +1,4 @@
-#include "graphicsfactory.h"
+#include "graphics_factory.h"
 
 GraphicsFactory::GraphicsFactory()
 {

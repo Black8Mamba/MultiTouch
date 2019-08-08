@@ -1,7 +1,7 @@
 #ifndef GRAPHICSFACTORY_H
 #define GRAPHICSFACTORY_H
 
-#include "pathelement.h"
+#include "path_element.h"
 #include <QString>
 
 

@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QTimer>
-#include "mythread.h"
-#include "rawtouchevent.h"
+#include "thread.h"
+#include "raw_touch_event.h"
 
 namespace Ui {
 class Widget;
