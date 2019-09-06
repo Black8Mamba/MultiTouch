@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: Yongjie
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 20:28:00
+ * @LastEditors: Please set LastEditors
+ */
 #include "raw_touch_event.h"
 #include <QDebug>
 
@@ -11,12 +18,13 @@ RawTouchEvent::RawTouchEvent()
 void RawTouchEvent::EventUpdate(HidMtFingerReport &finger_report, QRect rect)
 {
     point_list_.clear();
-    for (int i = 0; i < finger_report.count; ++i) {
+    for (int i = 0; i < finger_report.count; ++i) {//遍历所有触控点
+        //解析坐标
         qint16 x = GetX(finger_report, i) * CVT_DEV_TOUCH_WINDOWS_WIDTH / CVT_DEF_TOUCH_DEV_WIDTH; //
         qint16 y = GetY(finger_report, i) * CVT_DEV_TOUCH_WINDOWS_HEIGHT / CVT_DEF_TOUCH_DEV_HEIGHT;   //
         x = x - rect.x();
         y = y - rect.y();
-
+        //更新触点状态
         if (GetTipSwitch(finger_report, i)) {  //down or move
             if (map_.count(finger_report.finger_rpt[i].contact_id) != 0) { //have record
                 if (map_[finger_report.finger_rpt[i].contact_id] == Qt::TouchPointPressed)

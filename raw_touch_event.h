@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: Yongjie
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 20:17:27
+ * @LastEditors: Please set LastEditors
+ */
 #ifndef RAWTOUCHEVENT_H
 #define RAWTOUCHEVENT_H
 
@@ -48,14 +55,15 @@ public:
     }
 
 private:
+    //raw数据解析
     bool GetTipSwitch(HidMtFingerReport& finger_report, int index);
     qint16 GetX(HidMtFingerReport& finger_report, int index);
     qint16 GetY(HidMtFingerReport& finger_report, int index);
 
 private:
-    QList<RawTouchEvent::TouchPoint> point_list_;
-    HidMtFingerReport *finger_report_;
-    QMap<int, Qt::TouchPointState> map_;
+    QList<RawTouchEvent::TouchPoint> point_list_; //触点list
+    HidMtFingerReport *finger_report_; //触控raw数据
+    QMap<int, Qt::TouchPointState> map_; //<触点id，触点状态>,用于保存每个触点的状态
 };
 
 #endif // RAWTOUCHEVENT_H
