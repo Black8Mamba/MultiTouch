@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 17:07:04
+ * @LastEditors: Please set LastEditors
+ */
 #include "device_node_identify.h"
 #include <iostream>
 
@@ -32,8 +39,8 @@ vector<string> GetHidrawDeviceList(string dirent_path)
 
     while((dirp = readdir(dp)) != NULL) {
         if (strstr(dirp->d_name, "hidraw") != NULL) {
-            string device_name(dirent_path);
-            device_name += string(dirp->d_name);
+            string device_name(dirent_path); //dev路径
+            device_name += string(dirp->d_name);  //加上hidraw设备
             res.push_back(device_name);
         }
     }
@@ -161,11 +168,13 @@ string GetDeviceNode(string device_dirent_path,
        std::cout << "GetDeviceNode: Invalid input!" << std::endl;
        return string("");
    }
+   //获取hidraw设备列表
     device_list = GetHidrawDeviceList(device_dirent_path);
     if (device_list.size() == 0) {
         return string("");
     }
 
+    //遍历所有hidraw设备
     for (unsigned int i = 0; i < device_list.size(); ++i) {
         int fd = ::open(device_list[i].c_str(), O_RDWR);
         if (fd < 0) {
@@ -184,11 +193,12 @@ string GetDeviceNode(string device_dirent_path,
             return string("");
         }
 
-        if (info.dev_info.product == CVT_DEF_HID_DEV_PID   //匹配触摸屏的pid和vid
-                && info.dev_info.vendor == CVT_DEF_HID_DEV_VID
+        if (info.dev_info.product == CVT_DEF_HID_DEV_PID   //匹配触摸屏的pid、vid和物理信息
+                && info.dev_info.vendor == CVT_DEF_HID_DEV_VID  
                 && (strstr(info.hid_raw_phy, phy_info.c_str()) != NULL)) {
 
-            node = device_list[i].c_str();
+            //node = device_list[i].c_str();
+            node = device_list[i];
             return node;
         }
     }
