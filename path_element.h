@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: Yongjie
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 19:12:30
+ * @LastEditors: Please set LastEditors
+ */
 #ifndef PATHELEMENT_H
 #define PATHELEMENT_H
 
@@ -13,7 +20,7 @@ class MyQGraphicsItem
 public:
     MyQGraphicsItem();
 
-    virtual void Render(void) = 0;
+    virtual void Render(void) = 0; //绘制函数
     virtual void SetColor( const QColor& color ) = 0;
     virtual void SetThickness( int thickcness ) = 0;
     virtual void SetLayer( qreal zvalue ) = 0;

@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: Yongjie
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 19:18:41
+ * @LastEditors: Please set LastEditors
+ */
 #include "path_element.h"
 #include <QBrush>
 #include <QPen>
@@ -12,18 +19,18 @@ void MyPathItem::Render()
 {
     if (this->list_points_.size() < 1)
         return ;
-    QPainterPath path;
+    QPainterPath path; // Qt的Path类
 
     path.moveTo(this->list_points_[0]);
 
     for (int i = 1; i < this->list_points_.size(); ++i) {
-        path.lineTo(this->list_points_[i]);
+        path.lineTo(this->list_points_[i]); //点和点之间画直线
     }
-    path.lineTo(QPointF(this->list_points_.last().x()+0.1, this->list_points_.last().y()+0.1));
+    //path.lineTo(QPointF(this->list_points_.last().x()+0.1, this->list_points_.last().y()+0.1));
 
     path_item_.setPen(QPen(QBrush(Color()), (qreal)Thickness(), Qt::SolidLine,
-                           Qt::RoundCap, Qt::RoundJoin));
-    path_item_.setPath(path);
+                           Qt::RoundCap, Qt::RoundJoin)); //设置画笔属性
+    path_item_.setPath(path); //设置路径
 }
 
 void MyPathItem::SetColor(const QColor &color)
