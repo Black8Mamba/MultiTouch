@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: Yongjie
+ * @Date: 2019-09-06 14:42:29
+ * @LastEditTime: 2019-09-06 21:19:31
+ * @LastEditors: Please set LastEditors
+ */
 #include "slide.h"
 #include <QDebug>
 #include <string>
@@ -19,6 +26,7 @@ Slide::~Slide()
 void Slide::OnDeviceDown(const QPointF &pt, int id)
 {
 
+    //判断是否在map里面，如果存在，则清除数据
     if (ink_map_.keys().contains(id)) {
 
         InkData *dt = ink_map_.value(id);
@@ -42,16 +50,19 @@ void Slide::OnDeviceDown(const QPointF &pt, int id)
     dt->element_ = factory_.CreateGraphicsItem(graphics_type_);
     dt->element_->AddPoint(pt);
     ink_map_.insert(id, dt);
+    //down时调用drawStart，画一个点
     this->DrawStart(dt);
 }
 
 void Slide::OnDeviceMove(const QPointF &pt, int id)
 {
+    //判断是否在map里面
     if (ink_map_.keys().contains(id)) {
         InkData *dt = ink_map_.value(id);
         QPointF to = pt;
         if (dt->element_) {
             dt->element_->AddPoint(to);
+            //move时调用DrawTo，画一段临时轨迹
             this->DrawTo(dt, to);
             dt->pre_point_ = to;
         }
@@ -62,9 +73,11 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
 {
     Q_UNUSED(pt);
 
+    //判断是否在map里面
     if (ink_map_.keys().contains(id)) {
         InkData *dt = ink_map_.value(id);
 
+        //清除临时轨迹
         for (int i = 0; i < dt->temp_item_.size(); ++i) {
             QGraphicsScene::removeItem(dt->temp_item_[i]);
         }
@@ -72,10 +85,10 @@ void Slide::OnDeviceUp(const QPointF &pt, int id)
         dt->temp_item_.clear();
         dt->element_->SetColor(ink_color_);
         dt->element_->SetThickness(ink_thickness_);
-        dt->element_->Render();
+        dt->element_->Render(); //绘制最终的图形
 
-        QGraphicsScene::addItem(dt->element_->returnItem());
-        item_map_.insert(index_++, dt->element_->returnItem());
+        QGraphicsScene::addItem(dt->element_->returnItem());//添加到画布slide上面
+        item_map_.insert(index_++, dt->element_->returnItem());//纪录到容器里面
         ink_map_.remove(id);
     }
 }
